@@ -1068,3 +1068,138 @@ GET
 - **Variable superglobal:** es una variable especial de PHP que está disponible en todos los ámbitos del script.
 - Dos variables con el mismo nombre pueden ser diferentes si pertenecen a ámbitos distintos.
 - Incluir un archivo PHP no hace que las variables locales de sus funciones sean accesibles desde fuera de ellas.
+
+
+## 14. Variables estáticas
+
+Las variables estáticas son variables locales de una función que conservan su valor entre las diferentes llamadas a esa función.
+
+Normalmente, una variable local se crea cuando se ejecuta la función y deja de estar disponible cuando termina su ejecución. Sin embargo, una variable estática conserva su valor para la siguiente llamada.
+
+### 14.1. Ejemplo sin utilizar variables estáticas
+
+Observemos el siguiente código:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variables Estáticas</title>
+</head>
+<body>
+    <?php
+        function incrementaVariable() {
+            $contador = 0;
+
+            $contador++;
+
+            echo $contador . "<br>";
+        }
+
+        incrementaVariable();
+        incrementaVariable();
+        incrementaVariable();
+        incrementaVariable();
+    ?>
+</body>
+</html>
+```
+
+**Resultado en el navegador:**
+
+```text
+1
+1
+1
+1
+```
+
+¿Por qué sucede esto?
+
+Cada vez que llamamos a la función `incrementaVariable()`, se ejecutan de nuevo sus instrucciones:
+
+1. Se crea la variable local `$contador` con el valor `0`.
+2. Se incrementa su valor en una unidad mediante `$contador++`.
+3. Se muestra el resultado, que es `1`.
+4. Cuando termina la función, la variable local deja de estar disponible.
+
+Por eso, cada llamada comienza nuevamente desde cero y el resultado siempre es `1`.
+
+### 14.2. Crear una variable estática
+
+Para declarar una variable estática dentro de una función, utilizamos la palabra reservada `static` antes del nombre de la variable.
+
+La sintaxis es la siguiente:
+
+```php
+static $contador = 0;
+```
+
+De esta manera, la variable conserva su valor entre las llamadas a la función, en lugar de inicializarse de nuevo cada vez.
+
+### 14.3. Ejemplo utilizando una variable estática
+
+Modificamos el ejemplo anterior y añadimos la palabra `static`:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variables Estáticas</title>
+</head>
+<body>
+    <?php
+        function incrementaVariable() {
+            static $contador = 0;
+
+            $contador++;
+
+            echo $contador . "<br>";
+        }
+
+        incrementaVariable();
+        incrementaVariable();
+        incrementaVariable();
+        incrementaVariable();
+    ?>
+</body>
+</html>
+```
+
+**Resultado en el navegador:**
+
+```text
+1
+2
+3
+4
+```
+
+¿Por qué ahora los valores son diferentes?
+
+1. En la primera llamada, `$contador` comienza en `0`, se incrementa y muestra `1`.
+2. En la segunda llamada, conserva el valor `1`, se incrementa y muestra `2`.
+3. En la tercera llamada, conserva el valor `2`, se incrementa y muestra `3`.
+4. En la cuarta llamada, conserva el valor `3`, se incrementa y muestra `4`.
+
+La variable estática conserva su valor entre llamadas, por lo que no vuelve a inicializarse a `0` en cada ejecución de la función.
+
+### 14.4. Diferencia entre una variable local y una variable estática
+
+| Variable local | Variable estática local |
+|---|---|
+| Se inicializa cada vez que se ejecuta la asignación dentro de la función. | Su inicialización se realiza una sola vez durante la ejecución de la función. |
+| Su valor no se conserva entre llamadas una vez que termina la función. | Conserva su valor entre llamadas a la función. |
+| En nuestro ejemplo, siempre muestra `1`. | En nuestro ejemplo, muestra `1`, `2`, `3` y `4`. |
+
+### 14.5. Resumen de lo aprendido
+
+- Las variables locales pertenecen al ámbito de una función.
+- La palabra reservada `static` permite que una variable local conserve su valor entre llamadas a la función.
+- Una variable estática se inicializa una sola vez y mantiene el valor que va adquiriendo durante las siguientes llamadas.
+- Las variables estáticas son útiles para llevar contadores, acumular valores o conservar información entre llamadas a una función durante la ejecución del script.
+
