@@ -1203,3 +1203,159 @@ La variable estática conserva su valor entre llamadas, por lo que no vuelve a i
 - Una variable estática se inicializa una sola vez y mantiene el valor que va adquiriendo durante las siguientes llamadas.
 - Las variables estáticas son útiles para llevar contadores, acumular valores o conservar información entre llamadas a una función durante la ejecución del script.
 
+
+## 15. Strings (cadenas de texto)
+
+En PHP, un `string` es un tipo de dato que permite almacenar texto, como palabras, frases o caracteres.
+
+Podemos utilizar cadenas de texto para mostrar mensajes, almacenar nombres y combinar contenido HTML con código PHP.
+
+### 15.1. Mostrar texto con HTML y PHP
+
+Observemos el siguiente ejemplo:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String</title>
+    <style>
+        .resaltar {
+            color: #F00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <?php
+        echo "<p class='resaltar'>Esto es un ejemplo de frase</p>";
+    ?>
+</body>
+</html>
+```
+
+En este ejemplo, utilizamos `echo` para mostrar una cadena de texto que contiene etiquetas HTML.
+
+- `<p>` crea un párrafo.
+- `class='resaltar'` asigna la clase CSS `resaltar` al párrafo.
+- `color: #F00` establece el color rojo del texto.
+- `font-weight: bold` muestra el texto en negrita.
+
+El resultado será un párrafo con el texto en rojo y en negrita.
+
+### 15.2. Utilizar comillas dentro de un string
+
+En PHP podemos definir cadenas de texto utilizando comillas simples (`'`) o comillas dobles (`"`).
+
+Cuando utilizamos comillas dobles para delimitar una cadena, debemos tener cuidado si necesitamos incluir otras comillas dobles dentro de ella.
+
+Una solución consiste en utilizar comillas simples para los atributos HTML:
+
+```php
+echo "<p class='resaltar'>Esto es un ejemplo de frase</p>";
+```
+
+En este caso, las comillas dobles delimitan la cadena PHP, mientras que las comillas simples delimitan el valor del atributo `class` en HTML.
+
+### 15.3. Escapar caracteres
+
+Otra solución consiste en utilizar la barra invertida (`\`) para escapar las comillas dobles que aparecen dentro de la cadena.
+
+Por ejemplo:
+
+```php
+echo "<p class=\"resaltar\">Esto es otro ejemplo</p>";
+```
+
+La barra invertida indica que las comillas dobles forman parte del texto y no deben interpretarse como el final de la cadena PHP.
+
+El navegador recibirá el siguiente HTML:
+
+```html
+<p class="resaltar">Esto es otro ejemplo</p>
+```
+
+**Importante:** la barra invertida se utiliza dentro de la cadena PHP. En el HTML generado, las comillas aparecerán normalmente, sin la barra invertida.
+
+### 15.4. Comparar cadenas con `strcmp()`
+
+PHP dispone de la función `strcmp()` para comparar dos cadenas de texto.
+
+```php
+<?php
+    $texto1 = "Hola";
+    $texto2 = "Hola";
+
+    echo strcmp($texto1, $texto2);
+?>
+```
+
+**Resultado:**
+
+```text
+0
+```
+
+La función devuelve:
+
+- `0` si las cadenas son iguales.
+- Un número negativo si la primera cadena es menor que la segunda según la comparación binaria.
+- Un número positivo si la primera cadena es mayor que la segunda según la comparación binaria.
+
+Por ejemplo:
+
+```php
+<?php
+    echo strcmp("Hola", "Hola");
+    echo "<br>";
+
+    echo strcmp("Hola", "Mundo");
+?>
+```
+
+La primera comparación devuelve `0`, porque las cadenas son iguales. La segunda devuelve un valor distinto de cero, porque las cadenas son diferentes.
+
+No debemos depender de un valor positivo o negativo concreto; lo importante es comprobar si el resultado es igual, menor o mayor que cero.
+
+### 15.5. Comparar cadenas sin distinguir mayúsculas y minúsculas con `strcasecmp()`
+
+La función `strcasecmp()` compara dos cadenas sin distinguir entre letras mayúsculas y minúsculas para las letras ASCII.
+
+Por ejemplo:
+
+```php
+<?php
+    $texto1 = "Hola";
+    $texto2 = "HOLA";
+
+    echo strcmp($texto1, $texto2);
+    echo "<br>";
+
+    echo strcasecmp($texto1, $texto2);
+?>
+```
+
+El segundo resultado será `0`, porque `strcasecmp()` considera iguales `"Hola"` y `"HOLA"` en esta comparación.
+
+En cambio, `strcmp()` distingue entre mayúsculas y minúsculas, por lo que la primera comparación devuelve un valor distinto de cero.
+
+### 15.6. Diferencias entre `strcmp()` y `strcasecmp()`
+
+| Función | Comportamiento |
+|---|---|
+| `strcmp()` | Compara las cadenas distinguiendo mayúsculas y minúsculas. |
+| `strcasecmp()` | Compara las cadenas sin distinguir mayúsculas y minúsculas para letras ASCII. |
+
+Estas funciones son útiles cuando necesitamos comparar textos, comprobar nombres o evaluar si dos cadenas coinciden.
+
+### 15.7. Resumen de lo aprendido
+
+- Un `string` es una cadena de texto.
+- Podemos delimitar cadenas con comillas simples o dobles.
+- Si necesitamos incluir comillas dobles dentro de una cadena delimitada por comillas dobles, podemos escaparlas con `\"`.
+- `echo` permite mostrar cadenas de texto y contenido HTML.
+- `strcmp()` compara cadenas distinguiendo mayúsculas y minúsculas.
+- `strcasecmp()` compara cadenas sin distinguir mayúsculas y minúsculas para letras ASCII.
+- En ambas funciones, un resultado igual a `0` indica que las cadenas se consideran iguales según las reglas de comparación de la función.
