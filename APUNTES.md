@@ -850,3 +850,221 @@ Por ejemplo, si un archivo contiene funciones esenciales para la aplicación, su
 - `include` incorpora un archivo y normalmente permite continuar si falla su carga.
 - `require` se utiliza cuando necesitamos que el archivo se cargue correctamente para continuar.
 - `include_once` y `require_once` evitan incorporar el mismo archivo más de una vez durante una ejecución.
+
+
+## 13. Ámbitos de las variables
+
+El ámbito de una variable (*scope*) determina en qué partes del código podemos acceder a ella y utilizar su valor.
+
+En PHP podemos distinguir entre variables locales, variables globales y variables superglobales.
+
+### 13.1. Variable local
+
+Una variable local es aquella que se declara dentro de una función. Por defecto, solo puede utilizarse dentro de esa función.
+
+Por ejemplo:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ámbito de las variables</title>
+</head>
+<body>
+    <?php
+        $nombre = "Pedro";
+
+        function dameNombre() {
+            $nombre = "Luis";
+        }
+
+        dameNombre();
+
+        echo $nombre;
+    ?>
+</body>
+</html>
+```
+
+**Resultado en el navegador:**
+
+```text
+Pedro
+```
+
+¿Por qué aparece `Pedro` y no `Luis`?
+
+Porque existen dos variables diferentes llamadas `$nombre`:
+
+- La variable `$nombre` que está fuera de la función contiene `"Pedro"`.
+- La variable `$nombre` que está dentro de `dameNombre()` contiene `"Luis"` y es local a esa función.
+
+Aunque tengan el mismo nombre, son variables distintas. Por tanto, al ejecutar `echo $nombre` fuera de la función, se muestra el valor `"Pedro"`.
+
+### 13.2. Variables en archivos externos
+
+También podemos declarar funciones en un archivo externo e incluirlo mediante `include` o `require`.
+
+Creamos un archivo llamado `datos_otros.php` con el siguiente contenido:
+
+```php
+<?php
+    function otroNombre() {
+        $nombre = "Mario";
+    }
+?>
+```
+
+Después, en nuestro archivo `index.php`, escribimos:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ámbito de las variables</title>
+</head>
+<body>
+    <?php
+        $nombre = "Pedro";
+
+        include("datos_otros.php");
+
+        otroNombre();
+
+        echo $nombre;
+    ?>
+</body>
+</html>
+```
+
+**Resultado en el navegador:**
+
+```text
+Pedro
+```
+
+Aunque hemos incluido el archivo y llamado a la función `otroNombre()`, la variable `$nombre = "Mario"` es local a esa función.
+
+Incluir un archivo no significa que las variables locales de sus funciones pasen a estar disponibles fuera de ellas.
+
+### 13.3. Variable global
+
+Una variable global es aquella que se declara fuera de una función.
+
+Por ejemplo:
+
+```php
+$nombre = "Pedro";
+```
+
+Esta variable está disponible en el ámbito global del archivo. Sin embargo, **no se puede acceder directamente a ella desde dentro de una función solo por haberla declarado fuera**.
+
+Para utilizar una variable global dentro de una función, podemos emplear la palabra reservada `global`.
+
+Por ejemplo:
+
+```php
+<?php
+    $nombre = "Pedro";
+
+    function dameNombre() {
+        global $nombre;
+
+        echo $nombre;
+    }
+
+    dameNombre();
+?>
+```
+
+**Resultado:**
+
+```text
+Pedro
+```
+
+La instrucción:
+
+```php
+global $nombre;
+```
+
+permite que la función haga referencia a la variable `$nombre` del ámbito global, en lugar de crear una variable local independiente con ese nombre.
+
+### 13.4. Modificar una variable global desde una función
+
+También podemos cambiar el valor de una variable global desde una función utilizando `global`.
+
+```php
+<?php
+    $nombre = "Pedro";
+
+    function cambiarNombre() {
+        global $nombre;
+
+        $nombre = "Luis";
+    }
+
+    cambiarNombre();
+
+    echo $nombre;
+?>
+```
+
+**Resultado:**
+
+```text
+Luis
+```
+
+En este caso, la función modifica la variable global. Por eso, cuando se ejecuta `echo $nombre` después de llamar a `cambiarNombre()`, aparece `"Luis"`.
+
+### 13.5. Variables superglobales
+
+Las variables superglobales son variables especiales de PHP que están disponibles en todos los ámbitos del script, incluso dentro de las funciones, sin necesidad de utilizar `global`.
+
+Algunas de las más utilizadas son:
+
+| Variable | Utilidad |
+|---|---|
+| `$_GET` | Recoge datos enviados mediante parámetros de la URL. |
+| `$_POST` | Recoge datos enviados mediante el método HTTP POST. |
+| `$_SESSION` | Permite acceder a los datos de la sesión del usuario. |
+| `$_COOKIE` | Permite acceder a las cookies recibidas del navegador. |
+| `$_SERVER` | Contiene información sobre el servidor y la petición actual. |
+| `$_FILES` | Contiene información sobre los archivos enviados mediante formularios. |
+| `$GLOBALS` | Permite acceder a las variables del ámbito global. |
+
+Estas variables son arrays asociativos en los casos indicados y PHP las proporciona automáticamente. No tenemos que declararlas nosotros.
+
+Por ejemplo, podemos acceder a una variable superglobal desde una función:
+
+```php
+<?php
+    function mostrarMetodo() {
+        echo $_SERVER["REQUEST_METHOD"];
+    }
+
+    mostrarMetodo();
+?>
+```
+
+El resultado dependerá del método HTTP utilizado en la petición. Por ejemplo, si la página se solicita mediante GET, normalmente se mostrará:
+
+```text
+GET
+```
+
+**Importante:** `$_SESSION` requiere iniciar o reanudar la sesión mediante `session_start()` antes de utilizar los datos de la sesión.
+
+### 13.6. Resumen de lo aprendido
+
+- **Variable local:** se declara dentro de una función y, por defecto, solo está disponible dentro de ella.
+- **Variable global:** se declara fuera de una función. Para acceder a ella desde una función podemos utilizar `global`.
+- **Variable superglobal:** es una variable especial de PHP que está disponible en todos los ámbitos del script.
+- Dos variables con el mismo nombre pueden ser diferentes si pertenecen a ámbitos distintos.
+- Incluir un archivo PHP no hace que las variables locales de sus funciones sean accesibles desde fuera de ellas.
