@@ -579,3 +579,274 @@ El ejemplo completo quedaría así:
 - PHP determina automáticamente el tipo de dato según el valor asignado.
 - `echo` y `print` permiten mostrar información.
 - Podemos insertar variables en cadenas con comillas dobles o utilizar el operador de concatenación `.`.
+
+
+## 12. Flujo de ejecución (`include`, `require`)
+
+Por defecto, el código PHP se ejecuta de arriba hacia abajo, siguiendo el orden de las instrucciones. Sin embargo, existen estructuras que permiten modificar o controlar este flujo de ejecución, como las condiciones, los bucles y las funciones.
+
+Además, PHP permite organizar el código en varios archivos y utilizar instrucciones como `include` y `require` para incorporar archivos externos.
+
+### 12.1. ¿Qué son las funciones?
+
+Las funciones son bloques de código que permiten realizar una tarea específica y reutilizarla tantas veces como sea necesario.
+
+Sus principales características son:
+
+- Permiten reutilizar código y evitar repetir las mismas instrucciones.
+- Tienen su propio ámbito (scope), que determina desde dónde se pueden acceder a determinadas variables.
+- No ejecutan su contenido simplemente por estar declaradas: normalmente es necesario invocarlas o llamarlas.
+- Pueden recibir datos mediante parámetros y devolver resultados mediante `return`.
+
+### 12.2. Declarar una función
+
+Para declarar una función en PHP utilizamos la palabra reservada `function`, seguida del nombre de la función y unos paréntesis.
+
+Por ejemplo:
+
+```php
+function dameDatos() {
+    echo "Este es el mensaje del interior de la función <br>";
+}
+```
+
+En este ejemplo:
+
+- `function` indica que estamos declarando una función.
+- `dameDatos` es el nombre de la función.
+- `()` contiene los parámetros, si los hubiera.
+- `{}` delimitan el bloque de código que pertenece a la función.
+- `echo` muestra un mensaje cuando se ejecuta la función.
+
+Al declarar la función, el mensaje todavía no se muestra. Para ejecutarla debemos llamarla.
+
+### 12.3. ¿Cómo se invoca una función?
+
+Para llamar a una función, escribimos su nombre seguido de paréntesis y un punto y coma.
+
+```php
+dameDatos();
+```
+
+Cuando PHP ejecuta esta instrucción, entra en la función y ejecuta las instrucciones que contiene.
+
+Por ejemplo:
+
+```php
+<?php
+function dameDatos() {
+    echo "Este es el mensaje del interior de la función <br>";
+}
+
+echo "Antes de llamar a la función <br>";
+
+dameDatos();
+
+echo "Después de llamar a la función <br>";
+?>
+```
+
+El resultado será:
+
+```text
+Antes de llamar a la función
+Este es el mensaje del interior de la función
+Después de llamar a la función
+```
+
+**Importante:** la ubicación de la llamada determina en qué momento se ejecutará la función. En este ejemplo, el mensaje del interior aparece entre los otros dos mensajes.
+
+En PHP, una función definida en el ámbito global normalmente puede llamarse antes de su declaración si esta se encuentra en el mismo archivo y no depende de una estructura condicional que deba ejecutarse previamente.
+
+### 12.4. Ejemplo con varios bloques PHP
+
+Un mismo archivo puede contener varios bloques PHP separados por código HTML.
+
+Por ejemplo:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Ejecución</title>
+</head>
+<body>
+
+    <?php
+        // Primer bloque PHP
+        function dameDatos() {
+            echo "Este es el mensaje del interior de la función <br>";
+        }
+    ?>
+
+    <?php
+        // Segundo bloque PHP
+        echo "Este es el primer mensaje <br>";
+
+        dameDatos();
+
+        echo "Este es el segundo mensaje <br>";
+    ?>
+
+</body>
+</html>
+```
+
+El resultado en el navegador será:
+
+```text
+Este es el primer mensaje
+Este es el mensaje del interior de la función
+Este es el segundo mensaje
+```
+
+Como podemos observar, es posible tener más de un bloque PHP en un mismo archivo. PHP procesa el código y genera el contenido que recibirá el navegador.
+
+### 12.5. Crear una función en un archivo externo
+
+Para organizar mejor nuestros proyectos, podemos guardar las funciones en archivos separados y utilizarlas desde otros archivos PHP.
+
+Crearemos un archivo llamado `proporciona_datos.php` con el siguiente contenido:
+
+```php
+<?php
+
+function saludar() {
+    echo "Hola Mundo desde un archivo externo <br>";
+}
+
+?>
+```
+
+Este archivo contiene la declaración de la función `saludar()`. Al incluirlo desde otro archivo, podremos utilizar esa función.
+
+La estructura del proyecto quedará así:
+
+```text
+PHP_DESDE_CERO/
+└── 1/
+    ├── index.php
+    └── proporciona_datos.php
+```
+
+En este ejemplo, ambos archivos se encuentran en la misma carpeta.
+
+### 12.6. Utilizar `include`
+
+La instrucción `include` permite incorporar y ejecutar el contenido de otro archivo PHP.
+
+Para utilizar la función que hemos definido en `proporciona_datos.php`, escribimos:
+
+```php
+include("proporciona_datos.php");
+
+saludar();
+```
+
+Primero se incluye el archivo, que declara la función `saludar()`. Después llamamos a esa función para ejecutar su contenido.
+
+El resultado será:
+
+```text
+Hola Mundo desde un archivo externo
+```
+
+### 12.7. Ejemplo completo con `include`
+
+El archivo `index.php` quedaría así:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Ejecución</title>
+</head>
+<body>
+
+    <?php
+        // Primer bloque PHP
+        function dameDatos() {
+            echo "Este es el mensaje del interior de la función <br>";
+        }
+    ?>
+
+    <?php
+        // Segundo bloque PHP
+        echo "Este es el primer mensaje <br>";
+
+        dameDatos();
+
+        echo "Este es el segundo mensaje <br>";
+
+        // Incorporar un archivo externo
+        include("proporciona_datos.php");
+
+        // Llamar a la función del archivo externo
+        saludar();
+    ?>
+
+</body>
+</html>
+```
+
+El resultado en el navegador será:
+
+```text
+Este es el primer mensaje
+Este es el mensaje del interior de la función
+Este es el segundo mensaje
+Hola Mundo desde un archivo externo
+```
+
+### 12.8. Diferencia entre `include` y `require`
+
+Ambas instrucciones permiten incorporar un archivo externo, pero se comportan de forma diferente cuando el archivo no se encuentra o no puede cargarse.
+
+**`include`**
+
+Si PHP no puede incorporar el archivo, genera una advertencia (`warning`) y, normalmente, continúa ejecutando el resto del programa.
+
+```php
+include("archivo_no_existe.php");
+
+echo "El programa continúa ejecutándose";
+```
+
+**`require`**
+
+Si PHP no puede incorporar el archivo, genera un error que interrumpe la ejecución normal del programa.
+
+```php
+require("archivo_no_existe.php");
+
+echo "Esta instrucción no se ejecutará si require falla";
+```
+
+Podemos resumir la diferencia de la siguiente manera:
+
+| Instrucción | Si el archivo no se encuentra |
+|---|---|
+| `include` | Genera una advertencia y normalmente continúa la ejecución. |
+| `require` | Genera un error y detiene la ejecución normal del programa. |
+
+**¿Cuándo utilizar cada una?**
+
+- Utilizamos `include` cuando el archivo es complementario y podemos permitir que el programa continúe si falta.
+- Utilizamos `require` cuando el archivo es imprescindible para que el programa funcione correctamente.
+
+Por ejemplo, si un archivo contiene funciones esenciales para la aplicación, suele ser apropiado utilizar `require`.
+
+### 12.9. Resumen de lo aprendido
+
+- El código PHP se ejecuta siguiendo un orden, salvo cuando las estructuras del lenguaje controlan ese flujo.
+- Las funciones permiten reutilizar código y ejecutar tareas específicas.
+- Para declarar una función utilizamos `function`.
+- Para llamar a una función escribimos su nombre seguido de paréntesis.
+- Podemos separar las funciones en archivos externos para organizar mejor el proyecto.
+- `include` incorpora un archivo y normalmente permite continuar si falla su carga.
+- `require` se utiliza cuando necesitamos que el archivo se cargue correctamente para continuar.
+- `include_once` y `require_once` evitan incorporar el mismo archivo más de una vez durante una ejecución.
