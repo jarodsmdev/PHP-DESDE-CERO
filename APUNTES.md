@@ -1359,3 +1359,288 @@ Estas funciones son útiles cuando necesitamos comparar textos, comprobar nombre
 - `strcmp()` compara cadenas distinguiendo mayúsculas y minúsculas.
 - `strcasecmp()` compara cadenas sin distinguir mayúsculas y minúsculas para letras ASCII.
 - En ambas funciones, un resultado igual a `0` indica que las cadenas se consideran iguales según las reglas de comparación de la función.
+
+## 16. Operadores de comparación
+
+Los operadores de comparación permiten comparar dos valores o variables. El resultado de estas comparaciones es un valor booleano: `true` (verdadero) o `false` (falso).
+
+Estos operadores se utilizan habitualmente en estructuras condicionales, como `if` y `else`, para tomar decisiones dentro de un programa.
+
+### 16.1. Tipos de operadores de comparación
+
+En PHP disponemos de los siguientes operadores de comparación:
+
+| SINTAXIS | DEFINICIÓN | RESULTADO |
+|---|---|---|
+| `$var1 == $var2` | Igual que | Verdadero si ambos valores son iguales, realizando una comparación flexible de tipos. |
+| `$var1 === $var2` | Idéntico que | Verdadero si ambos valores son iguales y también tienen el mismo tipo de dato. |
+| `$var1 != $var2` | Diferente que | Verdadero si ambos valores son diferentes. |
+| `$var1 <> $var2` | Diferente que | Equivalente a `!=`. |
+| `$var1 !== $var2` | No idéntico que | Verdadero si los valores son diferentes o los tipos de datos no coinciden. |
+| `$var1 < $var2` | Menor que | Verdadero si el primer valor es menor que el segundo. |
+| `$var1 > $var2` | Mayor que | Verdadero si el primer valor es mayor que el segundo. |
+| `$var1 <= $var2` | Menor o igual que | Verdadero si el primer valor es menor o igual que el segundo. |
+| `$var1 >= $var2` | Mayor o igual que | Verdadero si el primer valor es mayor o igual que el segundo. |
+
+**Importante:** en PHP, `==` compara los valores mediante una comparación flexible, mientras que `===` compara tanto los valores como sus tipos de datos.
+
+### 16.2. Diferencia entre `==` y `===`
+
+Vamos a observar qué sucede cuando comparamos dos variables que contienen el mismo valor, pero tienen tipos de datos diferentes.
+
+```php
+<?php
+    $variable1 = 8;       // Numérica (Integer)
+    $variable2 = "8";     // Cadena de texto (String)
+    $variable3 = "Hugo";  // Cadena de texto (String)
+
+    if ($variable1 == $variable2) {
+        echo "Son iguales";
+    } else {
+        echo "No son iguales";
+    }
+?>
+```
+
+**Resultado en el navegador:**
+
+```text
+Son iguales
+```
+
+¿Por qué sucede esto?
+
+Porque el operador `==` realiza una comparación flexible. En este caso, PHP considera que el número `8` y la cadena `"8"` son equivalentes para esta comparación.
+
+Ahora vamos a utilizar el operador `===`:
+
+```php
+<?php
+    $variable1 = 8;       // Integer
+    $variable2 = "8";     // String
+    $variable3 = "Hugo";  // String
+
+    if ($variable1 === $variable2) {
+        echo "Son iguales";
+    } else {
+        echo "No son iguales";
+    }
+?>
+```
+
+**Resultado en el navegador:**
+
+```text
+No son iguales
+```
+
+¿Por qué?
+
+Porque, aunque ambos valores representan el número ocho, sus tipos de datos son diferentes:
+
+- `$variable1` contiene un número entero (`Integer`).
+- `$variable2` contiene una cadena de texto (`String`).
+
+Por tanto, el operador `===` devuelve `false`.
+
+**Conclusión:**
+
+- `==` compara los valores sin exigir que sean del mismo tipo.
+- `===` compara los valores y exige que sean del mismo tipo.
+
+### 16.3. Utilizar operadores de comparación en un formulario
+
+Ahora vamos a realizar un ejemplo práctico en el que utilizaremos operadores de comparación para comprobar si un usuario puede acceder a una página.
+
+Crearemos un formulario que solicite dos datos:
+
+- Nombre del usuario.
+- Edad del usuario.
+
+Para permitir el acceso, estableceremos dos condiciones:
+
+1. El nombre debe ser `Mario`.
+2. La edad debe ser mayor o igual a `18`.
+
+Para que ambas condiciones se cumplan simultáneamente, utilizaremos el operador lógico `&&` (AND).
+
+### 16.4. Código completo
+
+Creamos un archivo llamado `operadores.php` con el siguiente contenido:
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operadores</title>
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            background-color: #FFCC;
+            padding: 5px;
+            border: #666 5px solid;
+        }
+
+        .no_validado {
+            font-size: 18px;
+            color: #F00;
+            font-weight: bold;
+        }
+
+        .validado {
+            font-size: 18px;
+            color: #0C3;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Usando operadores de comparación</h1>
+
+    <a href="index.php">Volver al Inicio</a>
+
+    <form action="" method="POST" name="datos_usuario" id="datos_usuario">
+
+        <table width="15%" align="CENTER">
+
+            <tr>
+                <td>Nombre:</td>
+                <td>
+                    <label for="nombre_usuario"></label>
+                    <input type="text" name="nombre_usuario" id="nombre_usuario">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Edad:</td>
+                <td>
+                    <label for="edad_usuario"></label>
+                    <input type="text" name="edad_usuario" id="edad_usuario">
+                </td>
+            </tr>
+
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+
+            <tr>
+                <td colspan="2" align="CENTER">
+                    <input type="submit" name="enviando" id="enviando" value="Enviar">
+                </td>
+            </tr>
+
+        </table>
+
+    </form>
+
+    <?php
+        if (isset($_POST["enviando"])) {
+
+            $usuario = $_POST["nombre_usuario"];
+            $edad = $_POST["edad_usuario"];
+
+            if ($usuario == "Mario" && $edad >= 18) {
+
+                echo "<p class='validado' style='text-align: center;'>Puedes entrar</p>";
+
+            } else {
+
+                echo "<p class='no_validado' style='text-align: center;'>No puedes entrar</p>";
+
+            }
+        }
+    ?>
+
+</body>
+</html>
+```
+
+### 16.5. Entender el código PHP
+
+Vamos a explicar las instrucciones más importantes del ejemplo.
+
+**1. Comprobar si se ha enviado el formulario**
+
+```php
+if (isset($_POST["enviando"])) {
+```
+
+- `$_POST` es una variable superglobal que recoge los datos enviados mediante el método POST.
+- `isset()` comprueba si una variable está definida y no es `null`.
+- `$_POST["enviando"]` corresponde al botón de envío del formulario.
+
+De esta manera, comprobamos si el formulario ha sido enviado antes de procesar sus datos.
+
+**2. Recoger los datos del formulario**
+
+```php
+$usuario = $_POST["nombre_usuario"];
+$edad = $_POST["edad_usuario"];
+```
+
+Guardamos los valores introducidos por el usuario en dos variables:
+
+- `$usuario` almacena el nombre.
+- `$edad` almacena la edad.
+
+**3. Comprobar las condiciones**
+
+```php
+if ($usuario == "Mario" && $edad >= 18) {
+```
+
+Aquí utilizamos dos operadores:
+
+- `==` comprueba si el nombre es igual a `"Mario"`.
+- `>=` comprueba si la edad es mayor o igual a `18`.
+- `&&` exige que ambas condiciones sean verdaderas.
+
+Por tanto, solamente se permitirá el acceso cuando el nombre sea Mario y la edad sea igual o superior a 18.
+
+**4. Mostrar el resultado**
+
+```php
+echo "<p class='validado'>Puedes entrar</p>";
+```
+
+Si ambas condiciones se cumplen, mostramos el mensaje de acceso permitido.
+
+En caso contrario, se ejecuta el bloque `else` y mostramos:
+
+```php
+echo "<p class='no_validado'>No puedes entrar</p>";
+```
+
+### 16.6. Probar el formulario
+
+Podemos realizar las siguientes pruebas:
+
+| Nombre | Edad | Resultado |
+|---|---:|---|
+| Mario | 18 | Puedes entrar |
+| Mario | 25 | Puedes entrar |
+| Pedro | 25 | No puedes entrar |
+| Mario | 16 | No puedes entrar |
+| Pedro | 16 | No puedes entrar |
+
+### 16.7. Resumen de lo aprendido
+
+- Los operadores de comparación permiten comparar valores.
+- El resultado de una comparación es `true` o `false`.
+- `==` compara valores mediante una comparación flexible.
+- `===` compara valores y tipos de datos.
+- `!=` y `<>` permiten comprobar si dos valores son diferentes.
+- `!==` comprueba si dos valores son diferentes o si sus tipos no coinciden.
+- `<`, `>`, `<=` y `>=` permiten realizar comparaciones numéricas.
+- Los operadores de comparación se utilizan frecuentemente dentro de estructuras condicionales como `if`.
+- Podemos combinar varias condiciones utilizando operadores lógicos como `&&`.
+
+**Próximo paso:** aprender los operadores lógicos de PHP (`&&`, `||` y `!`) para combinar y modificar condiciones.
