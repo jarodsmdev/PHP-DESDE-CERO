@@ -1991,3 +1991,200 @@ El formulario enviará los datos mediante el método `POST` y PHP se encargará 
 - La división y el módulo necesitan una comprobación especial para evitar utilizar cero como divisor.
 
 **Nota sobre el operador módulo (`%`):** trabaja con números enteros. Por eso, en el ejemplo se convierten los valores mediante `(int)` antes de realizar la operación.
+
+
+### Ejemplo práctico: calculadora en PHP v2
+
+En esta segunda versión vamos a separar el formulario HTML de la lógica PHP.
+
+Para ello, realizaremos los siguientes pasos:
+
+1. Copia el archivo anterior y renómbralo como `index.html`.
+2. Crea otro archivo llamado `calculadora.php`.
+3. Ambos archivos deben estar dentro de la misma carpeta del proyecto.
+
+De esta manera tendremos dos archivos:
+
+- `index.html`: contendrá el formulario para ingresar los números y seleccionar la operación.
+- `calculadora.php`: contendrá la lógica PHP encargada de realizar los cálculos y mostrar los resultados.
+
+#### Archivo: index.html
+
+En este archivo colocaremos el siguiente código:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operadores Matemáticos II</title>
+</head>
+<body>
+
+    <h1>Operadores Matemáticos II</h1>
+    <hr>
+
+    <form action="calculadora.php" method="POST" name="form1">
+
+        <p>
+            <label for="num1">Primer número:</label>
+            <input type="number" step="any" name="num1" id="num1" required>
+
+            <label for="num2">Segundo número:</label>
+            <input type="number" step="any" name="num2" id="num2" required>
+
+            <label for="operacion">Operación:</label>
+
+            <select name="operacion" id="operacion" required>
+                <option value="">Seleccione</option>
+                <option value="Suma">Suma</option>
+                <option value="Resta">Resta</option>
+                <option value="Multiplicacion">Multiplicación</option>
+                <option value="Division">División</option>
+                <option value="Modulo">Módulo</option>
+                <option value="Potencia">Potencia</option>
+            </select>
+        </p>
+
+        <p>
+            <input type="submit" value="Enviar" name="button" id="button">
+        </p>
+
+    </form>
+
+</body>
+</html>
+```
+
+Observa especialmente la siguiente línea:
+
+```html
+<form action="calculadora.php" method="POST" name="form1">
+```
+
+El atributo `action` indica a qué archivo se enviarán los datos del formulario. En este caso, los datos serán enviados a `calculadora.php`.
+
+El atributo `method="POST"` indica el método utilizado para enviar la información.
+
+#### Archivo: calculadora.php
+
+En este archivo colocaremos toda la lógica de nuestra calculadora:
+
+```php
+<style>
+    .resultado {
+        color: #F00;
+        font-weight: bold;
+        font-size: 32px;
+    }
+</style>
+
+<?php
+
+if (isset($_POST["button"])) {
+
+    $numero1 = $_POST["num1"];
+    $numero2 = $_POST["num2"];
+    $operacion = $_POST["operacion"];
+
+    calcular($operacion, $numero1, $numero2);
+
+}
+
+function calcular($calculo, $numero1, $numero2) {
+
+    // Comprobamos que los valores sean numéricos.
+    if (!is_numeric($numero1) || !is_numeric($numero2)) {
+        echo "Debe ingresar dos números válidos.";
+        return;
+    }
+
+    if (!strcmp("Suma", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 + $numero2) . "</p>";
+
+    } elseif (!strcmp("Resta", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 - $numero2) . "</p>";
+
+    } elseif (!strcmp("Multiplicacion", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 * $numero2) . "</p>";
+
+    } elseif (!strcmp("Division", $calculo)) {
+
+        if ($numero2 == 0) {
+            echo "No se puede dividir por cero.";
+        } else {
+            echo "<p class='resultado'>El resultado es: " . ($numero1 / $numero2) . "</p>";
+        }
+
+    } elseif (!strcmp("Modulo", $calculo)) {
+
+        if ((int)$numero2 == 0) {
+            echo "No se puede calcular el módulo con divisor cero.";
+        } else {
+            echo "<p class='resultado'>El resultado es: " . ((int)$numero1 % (int)$numero2) . "</p>";
+        }
+
+    } elseif (!strcmp("Potencia", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 ** $numero2) . "</p>";
+
+    } else {
+
+        echo "Debe seleccionar una operación válida.";
+
+    }
+
+}
+
+?>
+```
+
+### ¿Qué se hizo?
+
+En esta versión separamos el formulario HTML de la lógica de la aplicación.
+
+Anteriormente, tanto el formulario como el código PHP estaban dentro del mismo archivo. Ahora cada archivo tiene una función específica.
+
+**1. En `index.html`:**
+
+Tenemos el formulario donde el usuario ingresa los números y selecciona la operación matemática.
+
+Cuando presionamos el botón Enviar, los datos se envían al archivo `calculadora.php`.
+
+**2. En `calculadora.php`:**
+
+Recibimos los datos mediante `$_POST`, almacenamos los valores en variables y llamamos a la función `calcular()`.
+
+```php
+calcular($operacion, $numero1, $numero2);
+```
+
+Esta función recibe tres parámetros:
+
+- `$calculo`: la operación matemática seleccionada.
+- `$numero1`: el primer número ingresado.
+- `$numero2`: el segundo número ingresado.
+
+Después, mediante las condiciones `if` y `elseif`, determinamos qué operación debemos realizar y mostramos el resultado.
+
+**3. Utilizamos CSS para mostrar el resultado:**
+
+La clase `.resultado` permite darle formato al resultado de la operación.
+
+```css
+.resultado {
+    color: #F00;
+    font-weight: bold;
+    font-size: 32px;
+}
+```
+
+### Concepto importante
+
+Separar el formulario de la lógica de programación permite organizar mejor nuestro código y facilita su mantenimiento.
+
+Esta separación es una práctica habitual en el desarrollo de aplicaciones web: HTML se encarga de la estructura y PHP procesa los datos y ejecuta las operaciones.
