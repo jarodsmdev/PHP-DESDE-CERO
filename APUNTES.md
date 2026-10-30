@@ -1781,3 +1781,213 @@ En este ejemplo:
 - `Autor::MI_AUTOR` permite acceder a la constante utilizando el nombre de la clase.
 
 Las constantes de clase son una forma habitual de organizar valores que pertenecen a una clase y que no deben modificarse.
+
+
+## 18. Operadores matemáticos en PHP
+
+Los operadores matemáticos permiten realizar operaciones aritméticas con variables y valores numéricos.
+
+PHP dispone de los siguientes operadores:
+
+| OPERADOR | NOMBRE | EJEMPLO |
+| -------- | ----------------------------- | ----------- |
+| `+` | Suma | `$a + $b` |
+| `-` | Resta | `$a - $b` |
+| `*` | Multiplicación | `$a * $b` |
+| `/` | División | `$a / $b` |
+| `%` | Módulo (resto de la división) | `$a % $b` |
+| `**` | Exponenciación (potencia) | `$a ** $b` |
+| `++` | Incremento (aumenta en 1) | `$a++` |
+| `--` | Decremento (disminuye en 1) | `$a--` |
+| `+=` | Asignación con suma | `$a += $b` |
+| `-=` | Asignación con resta | `$a -= $b` |
+| `*=` | Asignación con multiplicación | `$a *= $b` |
+| `/=` | Asignación con división | `$a /= $b` |
+| `%=` | Asignación con módulo | `$a %= $b` |
+| `**=` | Asignación con exponenciación | `$a **= $b` |
+
+### Ejemplo práctico en PHP
+
+```php
+<?php
+
+$a = 10;
+$b = 3;
+
+echo $a + $b;  // 13
+echo "<br>";
+
+echo $a - $b;  // 7
+echo "<br>";
+
+echo $a * $b;  // 30
+echo "<br>";
+
+echo $a / $b;  // 3.333...
+echo "<br>";
+
+echo $a % $b;  // 1
+echo "<br>";
+
+echo $a ** $b; // 1000
+echo "<br>";
+
+$a += 5;       // Equivale a $a = $a + 5
+echo $a;       // 15
+
+?>
+```
+
+### Importante: operadores de incremento y decremento
+
+Los operadores de incremento (`++`) y decremento (`--`) permiten aumentar o disminuir una variable en una unidad.
+
+Existen dos formas de utilizarlos:
+
+| OPERADOR | NOMBRE | FUNCIONAMIENTO |
+| -------- | -------------- | --------------------------------------------- |
+| `++$a` | Preincremento | Incrementa primero y luego devuelve el valor. |
+| `$a++` | Postincremento | Devuelve primero el valor y luego incrementa. |
+| `--$a` | Predecremento | Decrementa primero y luego devuelve el valor. |
+| `$a--` | Postdecremento | Devuelve primero el valor y luego decrementa. |
+
+Ejemplo:
+
+```php
+<?php
+
+$a = 5;
+
+echo ++$a; // Muestra 6
+echo "<br>";
+
+echo $a++; // Muestra 6, después la variable vale 7
+echo "<br>";
+
+echo --$a; // Muestra 6
+echo "<br>";
+
+echo $a--; // Muestra 6, después la variable vale 5
+
+?>
+```
+
+La diferencia entre pre y post incremento se aprecia cuando el operador se utiliza dentro de una expresión. Si se utiliza como una instrucción independiente, ambos terminan modificando la variable de la misma manera.
+
+### Ejemplo práctico: calculadora en PHP
+
+Vamos a crear una pequeña calculadora que permita ingresar dos números y seleccionar una operación matemática.
+
+El formulario enviará los datos mediante el método `POST` y PHP se encargará de realizar el cálculo y mostrar el resultado.
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operadores Matemáticos</title>
+</head>
+<body>
+
+    <h1>Operadores Matemáticos</h1>
+    <hr>
+
+    <form action="" method="POST" name="form1">
+
+        <p>
+            <label for="num1">Primer número:</label>
+            <input type="number" step="any" name="num1" id="num1" required>
+
+            <label for="num2">Segundo número:</label>
+            <input type="number" step="any" name="num2" id="num2" required>
+
+            <label for="operacion">Operación:</label>
+
+            <select name="operacion" id="operacion" required>
+                <option value="">Seleccione</option>
+                <option value="Suma">Suma</option>
+                <option value="Resta">Resta</option>
+                <option value="Multiplicacion">Multiplicación</option>
+                <option value="Division">División</option>
+                <option value="Modulo">Módulo</option>
+                <option value="Potencia">Potencia</option>
+            </select>
+        </p>
+
+        <p>
+            <input type="submit" value="Calcular" name="button">
+        </p>
+
+    </form>
+
+    <?php
+
+    if (isset($_POST["button"])) {
+
+        $numero1 = $_POST["num1"];
+        $numero2 = $_POST["num2"];
+        $operacion = $_POST["operacion"];
+
+        // Comprobamos que los valores ingresados sean numéricos.
+        if (!is_numeric($numero1) || !is_numeric($numero2)) {
+
+            echo "Debe ingresar dos números válidos.";
+
+        } elseif ($operacion == "Suma") {
+
+            echo "El resultado es: " . ($numero1 + $numero2);
+
+        } elseif ($operacion == "Resta") {
+
+            echo "El resultado es: " . ($numero1 - $numero2);
+
+        } elseif ($operacion == "Multiplicacion") {
+
+            echo "El resultado es: " . ($numero1 * $numero2);
+
+        } elseif ($operacion == "Division") {
+
+            if ($numero2 == 0) {
+                echo "No se puede dividir por cero.";
+            } else {
+                echo "El resultado es: " . ($numero1 / $numero2);
+            }
+
+        } elseif ($operacion == "Modulo") {
+
+            if ((float)$numero2 == 0) {
+                echo "No se puede calcular el módulo con divisor cero.";
+            } else {
+                echo "El resultado es: " . ((int)$numero1 % (int)$numero2);
+            }
+
+        } elseif ($operacion == "Potencia") {
+
+            echo "El resultado es: " . ($numero1 ** $numero2);
+
+        } else {
+
+            echo "Debe seleccionar una operación válida.";
+
+        }
+
+    }
+
+    ?>
+
+</body>
+</html>
+```
+
+**Algunos detalles importantes del ejemplo:**
+
+- `isset($_POST["button"])` comprueba si se ha enviado el formulario.
+- `$_POST` permite recuperar los valores enviados por el formulario.
+- `is_numeric()` comprueba si un valor es numérico.
+- `elseif` permite evaluar otra condición cuando la anterior no se cumple.
+- `==` compara el valor de una variable con otro valor.
+- `.` permite concatenar (unir) cadenas de texto con resultados.
+- La división y el módulo necesitan una comprobación especial para evitar utilizar cero como divisor.
+
+**Nota sobre el operador módulo (`%`):** trabaja con números enteros. Por eso, en el ejemplo se convierten los valores mediante `(int)` antes de realizar la operación.
