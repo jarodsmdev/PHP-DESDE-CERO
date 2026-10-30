@@ -1644,3 +1644,140 @@ Podemos realizar las siguientes pruebas:
 - Podemos combinar varias condiciones utilizando operadores lógicos como `&&`.
 
 **Próximo paso:** aprender los operadores lógicos de PHP (`&&`, `||` y `!`) para combinar y modificar condiciones.
+
+
+## 17. Uso de constantes en PHP
+
+Las constantes son identificadores que almacenan un valor que no puede cambiar durante la ejecución del programa.
+
+En PHP existen dos tipos principales:
+
+- **Constantes definidas por el programador:** son las que creamos nosotros.
+- **Constantes predefinidas:** son las que PHP proporciona automáticamente.
+
+### Declaración de una constante
+
+Para declarar una constante podemos utilizar la función `define()`:
+
+```php
+define("NOMBRE_DE_CONSTANTE", valor);
+```
+
+Por convención, los nombres de las constantes se escriben en **mayúsculas**.
+
+Algunas reglas y características de las constantes:
+
+- El nombre de una constante no lleva el símbolo `$`.
+- Si el nombre tiene varias palabras, se recomienda separarlas con guion bajo (`_`). Ejemplo: `MI_AUTOR`.
+- Las constantes definidas con `define()` tienen ámbito global por defecto.
+- Una constante no puede redefinirse una vez que ha sido declarada.
+- Una constante puede almacenar valores escalares (`string`, `int`, `float` y `bool`) y también arrays.
+
+Ejemplo:
+
+```php
+<?php
+
+define("MI_AUTOR", "Pedro");
+define("EDAD", 30);
+
+echo MI_AUTOR;
+echo "<br>";
+echo EDAD;
+
+?>
+```
+
+**Importante:** En versiones anteriores a PHP 8.0, `define()` permitía utilizar un tercer parámetro para indicar que el nombre de la constante no distinguiera entre mayúsculas y minúsculas.
+
+```php
+define("CODIGO_AUTOR", "MA0123", true);
+echo codigo_autor;
+```
+
+Esta característica está obsoleta desde PHP 7.3 y fue eliminada en PHP 8.0. Por lo tanto, en las versiones actuales debemos respetar exactamente las mayúsculas y minúsculas del nombre de la constante.
+
+### Constantes predefinidas en PHP
+
+PHP proporciona muchas constantes que contienen información sobre la versión, la configuración y el entorno en el que se está ejecutando.
+
+Algunos ejemplos son:
+
+- `PHP_VERSION`: versión completa de PHP.
+- `PHP_MAJOR_VERSION`: número de la versión principal de PHP.
+- `PHP_LIBDIR`: directorio de las bibliotecas de PHP.
+- `PHP_DATADIR`: directorio de datos de PHP.
+
+Ejemplo:
+
+```php
+<?php
+
+echo PHP_VERSION;
+echo "<br>";
+echo PHP_MAJOR_VERSION;
+
+?>
+```
+
+### Constantes mágicas
+
+Además de las constantes predefinidas, PHP cuenta con unas constantes especiales llamadas **constantes mágicas**.
+
+Se caracterizan porque su valor depende del lugar donde se utilizan dentro del código.
+
+Algunas de las más utilizadas son:
+
+- `__LINE__`: número de línea actual del archivo.
+- `__FILE__`: ruta completa y nombre del archivo actual.
+- `__DIR__`: directorio del archivo actual.
+- `__CLASS__`: nombre de la clase actual.
+
+Ejemplo:
+
+```php
+<?php
+
+echo __LINE__;
+echo "<br>";
+echo __FILE__;
+echo "<br>";
+echo __DIR__;
+
+?>
+```
+
+Puedes consultar todas las constantes predefinidas y mágicas en la documentación oficial de PHP:
+
+- [Constantes predefinidas](https://www.php.net/manual/es/reserved.constants.php)
+- [Constantes mágicas](https://www.php.net/manual/es/language.constants.magic.php)
+
+### Constantes dentro de las clases
+
+En PHP también podemos declarar constantes dentro de una clase utilizando la palabra reservada `const`.
+
+Para acceder a ellas desde fuera de la clase utilizamos el operador de resolución de ámbito `::`.
+
+Ejemplo:
+
+```php
+<?php
+
+class Autor {
+
+    const MI_AUTOR = "Pedro";
+
+}
+
+echo Autor::MI_AUTOR;
+
+?>
+```
+
+En este ejemplo:
+
+- `const` declara una constante dentro de la clase.
+- `MI_AUTOR` es el nombre de la constante.
+- `Autor::MI_AUTOR` permite acceder a la constante utilizando el nombre de la clase.
+
+Las constantes de clase son una forma habitual de organizar valores que pertenecen a una clase y que no deben modificarse.
