@@ -2460,3 +2460,213 @@ echo $a;         // 4
 Además, cada vez que enviamos el formulario se realiza una nueva petición al servidor. Por lo tanto, el incremento o decremento no se conserva para el siguiente envío: se vuelve a utilizar el valor que el usuario ingresa en el formulario.
 
 Con esto hemos aprendido a incorporar archivos externos mediante `include()`, reutilizar funciones y trabajar con los operadores de preincremento, postincremento, predecremento y postdecremento.
+
+
+## 19. Funciones matemáticas y casting
+
+PHP dispone de una gran cantidad de funciones matemáticas que permiten realizar cálculos sin necesidad de programar las operaciones desde cero.
+
+Puedes consultar todas las funciones matemáticas disponibles en la documentación oficial:
+
+[Funciones matemáticas de PHP](https://www.php.net/manual/es/ref.math.php)
+
+### Algunas funciones matemáticas
+
+A continuación, veremos algunas de las funciones más utilizadas:
+
+| FUNCIÓN | DESCRIPCIÓN | EJEMPLO |
+| ------- | ----------- | ------- |
+| `pow()` | Calcula una potencia. | `pow(6, 3)` |
+| `round()` | Redondea un número. | `round(5.25)` |
+| `max()` | Devuelve el valor máximo de una lista. | `max(10, 20, 30)` |
+| `min()` | Devuelve el valor mínimo de una lista. | `min(10, 20, 30)` |
+| `pi()` | Devuelve el valor de PI. | `pi()` |
+| `sqrt()` | Calcula la raíz cuadrada. | `sqrt(25)` |
+| `rand()` | Genera un número entero aleatorio. | `rand(10, 50)` |
+
+### Ejemplo práctico: funciones matemáticas
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funciones Matemáticas</title>
+</head>
+<body>
+
+    <h1>Funciones Matemáticas</h1>
+    <hr>
+
+    <?php
+
+        $num1 = rand();
+        $num2 = rand(10, 50);
+        $num3 = pow(6, 3);
+        $num4 = 5.25;
+
+        echo "<p>El número aleatorio es: " . $num1 . "</p>";
+
+        echo "<p>El número aleatorio entre 10 y 50: " . $num2 . "</p>";
+
+        echo "<p>6 elevado a 3 es: " . $num3 . "</p>";
+
+        echo "<p>El número " . $num4 . ", redondeado es: " . round($num4) . "</p>";
+
+        echo "<p>El número " . $num4 . ", redondeado a 1 decimal: " . round($num4, 1) . "</p>";
+
+        echo "<p>El número máximo entre 10, 20 y 30 es: " . max(10, 20, 30) . "</p>";
+
+        echo "<p>El número mínimo entre 10, 20 y 30 es: " . min(10, 20, 30) . "</p>";
+
+        echo "<p>El valor de PI es: " . pi() . "</p>";
+
+        echo "<p>La raíz cuadrada de 25 es: " . sqrt(25) . "</p>";
+
+    ?>
+
+</body>
+</html>
+```
+
+### ¿Qué es el casting?
+
+El *casting* es el proceso mediante el cual convertimos un valor de un tipo de dato a otro.
+
+En PHP existen dos formas principales de conversión de tipos:
+
+- Casting implícito.
+- Casting explícito.
+
+#### 1. Casting implícito
+
+PHP puede determinar automáticamente el tipo de dato de una variable según el valor que se le asigna.
+
+Por ejemplo:
+
+```php
+<?php
+
+$valor = 5.25;  // PHP interpreta el valor como float.
+
+$valor = 5;     // PHP interpreta el valor como integer.
+
+$valor = "5";   // PHP interpreta el valor como string.
+
+?>
+```
+
+En estos ejemplos no necesitamos indicar el tipo de dato, porque PHP lo determina automáticamente.
+
+Podemos comprobar el tipo de una variable utilizando la función `gettype()`:
+
+```php
+<?php
+
+$valor = 5.25;
+echo gettype($valor); // double
+
+echo "<br>";
+
+$valor = 5;
+echo gettype($valor); // integer
+
+echo "<br>";
+
+$valor = "5";
+echo gettype($valor); // string
+
+?>
+```
+
+#### 2. Casting explícito
+
+También podemos indicar manualmente el tipo de dato al que queremos convertir una variable.
+
+Para ello utilizamos los operadores de conversión o *casting*.
+
+Algunos de los más utilizados son:
+
+| CASTING | TIPO DE DATO |
+| ------- | ------------ |
+| `(int)` o `(integer)` | Número entero |
+| `(float)` o `(double)` | Número decimal |
+| `(string)` | Cadena de texto |
+| `(bool)` o `(boolean)` | Booleano |
+| `(array)` | Array |
+| `(object)` | Objeto |
+
+Ejemplo:
+
+```php
+<?php
+
+$valor = "5";       // Tipo string.
+
+$numero = (int) $valor; // Convertimos string a integer.
+
+echo $numero;
+
+echo "<br>";
+
+echo gettype($numero); // integer
+
+?>
+```
+
+En este caso:
+
+1. La variable `$valor` almacena el texto `"5"`.
+2. Mediante `(int)` convertimos ese valor a un número entero.
+3. El resultado se almacena en la variable `$numero`.
+
+También podemos realizar otras conversiones:
+
+```php
+<?php
+
+$numero = 10;
+
+$decimal = (float) $numero;
+$texto = (string) $numero;
+$booleano = (bool) $numero;
+
+echo gettype($decimal);   // double
+echo "<br>";
+
+echo gettype($texto);     // string
+echo "<br>";
+
+echo gettype($booleano);  // boolean
+
+?>
+```
+
+**Importante:** el casting no siempre conserva el valor original. Por ejemplo, al convertir un número decimal a entero, se descarta la parte decimal:
+
+```php
+<?php
+
+$numero = 5.85;
+
+$entero = (int) $numero;
+
+echo $entero; // 5
+
+?>
+```
+
+La conversión a entero no redondea el número; simplemente elimina la parte decimal.
+
+### Resumen
+
+- Las funciones matemáticas permiten realizar cálculos de manera sencilla.
+- `pow()` calcula potencias.
+- `round()` redondea números.
+- `max()` y `min()` permiten obtener el valor máximo y mínimo.
+- `pi()` devuelve el valor de PI.
+- `sqrt()` calcula raíces cuadradas.
+- `rand()` genera números enteros aleatorios.
+- El casting implícito permite que PHP determine automáticamente el tipo de dato.
+- El casting explícito permite convertir manualmente una variable utilizando expresiones como `(int)`, `(float)` o `(string)`.
