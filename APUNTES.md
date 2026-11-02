@@ -2188,3 +2188,275 @@ La clase `.resultado` permite darle formato al resultado de la operación.
 Separar el formulario de la lógica de programación permite organizar mejor nuestro código y facilita su mantenimiento.
 
 Esta separación es una práctica habitual en el desarrollo de aplicaciones web: HTML se encarga de la estructura y PHP procesa los datos y ejecuta las operaciones.
+
+
+### Ejemplo práctico: calculadora en PHP v3
+
+En esta tercera versión vamos a mejorar nuestra calculadora incorporando los operadores de incremento y decremento.
+
+Además, vamos a utilizar la instrucción `include()` para incorporar el archivo `calculadora.php` dentro de `index.php`.
+
+De esta manera, tendremos dos archivos:
+
+- `index.php`: contiene el formulario HTML y recibe los datos enviados por el usuario.
+- `calculadora.php`: contiene la función `calcular()` y toda la lógica de las operaciones matemáticas.
+
+#### Archivo: index.php
+
+En este archivo tendremos el formulario y utilizaremos `include()` para incorporar el archivo que contiene nuestra función.
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operadores Matemáticos III</title>
+</head>
+<body>
+
+    <h1>Operadores Matemáticos III</h1>
+    <hr>
+
+    <form action="" method="POST" name="form1">
+
+        <p>
+            <label for="num1">Primer número:</label>
+            <input type="number" step="any" name="num1" id="num1" required>
+
+            <label for="num2">Segundo número:</label>
+            <input type="number" step="any" name="num2" id="num2" required>
+
+            <label for="operacion">Operación:</label>
+
+            <select name="operacion" id="operacion" required>
+                <option value="">Seleccione</option>
+                <option value="Suma">Suma</option>
+                <option value="Resta">Resta</option>
+                <option value="Multiplicacion">Multiplicación</option>
+                <option value="Division">División</option>
+                <option value="Modulo">Módulo</option>
+                <option value="Potencia">Potencia</option>
+                <option value="Preincremento">Preincremento</option>
+                <option value="Postincremento">Postincremento</option>
+                <option value="Predecremento">Predecremento</option>
+                <option value="Postdecremento">Postdecremento</option>
+            </select>
+        </p>
+
+        <p>
+            <input type="submit" value="Enviar" name="button" id="button">
+        </p>
+
+    </form>
+
+    <?php
+
+        include("calculadora.php");
+
+        if (isset($_POST["button"])) {
+
+            $numero1 = $_POST["num1"];
+            $numero2 = $_POST["num2"];
+            $operacion = $_POST["operacion"];
+
+            calcular($operacion, $numero1, $numero2);
+
+        }
+
+    ?>
+
+</body>
+</html>
+```
+
+**Observación:** mediante la instrucción `include("calculadora.php")` incorporamos el contenido del archivo `calculadora.php` en nuestro archivo principal.
+
+Esto permite utilizar la función `calcular()` que está declarada en el archivo incluido.
+
+#### Archivo: calculadora.php
+
+En este archivo declararemos la función `calcular()`, que se encargará de ejecutar las operaciones matemáticas.
+
+```php
+<style>
+    .resultado {
+        color: #F00;
+        font-weight: bold;
+        font-size: 32px;
+    }
+</style>
+
+<?php
+
+function calcular($calculo, $numero1, $numero2) {
+
+    if (!is_numeric($numero1) || !is_numeric($numero2)) {
+        echo "Debe ingresar dos números válidos.";
+        return;
+    }
+
+    if (!strcmp("Suma", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 + $numero2) . "</p>";
+
+    } elseif (!strcmp("Resta", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 - $numero2) . "</p>";
+
+    } elseif (!strcmp("Multiplicacion", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 * $numero2) . "</p>";
+
+    } elseif (!strcmp("Division", $calculo)) {
+
+        if ($numero2 == 0) {
+            echo "No se puede dividir por cero.";
+        } else {
+            echo "<p class='resultado'>El resultado es: " . ($numero1 / $numero2) . "</p>";
+        }
+
+    } elseif (!strcmp("Modulo", $calculo)) {
+
+        if ((int)$numero2 == 0) {
+            echo "No se puede calcular el módulo con divisor cero.";
+        } else {
+            echo "<p class='resultado'>El resultado es: " . ((int)$numero1 % (int)$numero2) . "</p>";
+        }
+
+    } elseif (!strcmp("Potencia", $calculo)) {
+
+        echo "<p class='resultado'>El resultado es: " . ($numero1 ** $numero2) . "</p>";
+
+    } elseif (!strcmp("Preincremento", $calculo)) {
+
+        $resultado = ++$numero1;
+
+        echo "<p class='resultado'>Resultado de preincremento: " . $resultado . "</p>";
+        echo "<p>Valor final de la variable: " . $numero1 . "</p>";
+
+    } elseif (!strcmp("Postincremento", $calculo)) {
+
+        $resultado = $numero1++;
+
+        echo "<p class='resultado'>Resultado de postincremento: " . $resultado . "</p>";
+        echo "<p>Valor final de la variable: " . $numero1 . "</p>";
+
+    } elseif (!strcmp("Predecremento", $calculo)) {
+
+        $resultado = --$numero1;
+
+        echo "<p class='resultado'>Resultado de predecremento: " . $resultado . "</p>";
+        echo "<p>Valor final de la variable: " . $numero1 . "</p>";
+
+    } elseif (!strcmp("Postdecremento", $calculo)) {
+
+        $resultado = $numero1--;
+
+        echo "<p class='resultado'>Resultado de postdecremento: " . $resultado . "</p>";
+        echo "<p>Valor final de la variable: " . $numero1 . "</p>";
+
+    } else {
+
+        echo "Debe seleccionar una operación válida.";
+
+    }
+
+}
+
+?>
+```
+
+### ¿Qué se hizo?
+
+**1. Incorporamos el archivo calculadora.php mediante include().**
+
+En `index.php` agregamos la siguiente instrucción:
+
+```php
+include("calculadora.php");
+```
+
+Esto permite incorporar el archivo externo y utilizar las funciones que contiene.
+
+**2. Agregamos cuatro operaciones nuevas al formulario:**
+
+- Preincremento.
+- Postincremento.
+- Predecremento.
+- Postdecremento.
+
+**3. Diferencia entre preincremento y postincremento**
+
+Esta es una diferencia importante que debemos comprender.
+
+Supongamos que tenemos una variable con el valor `5`.
+
+**Preincremento (`++$a`)**
+
+Primero incrementa la variable y después devuelve el nuevo valor.
+
+```php
+$a = 5;
+
+$resultado = ++$a;
+
+echo $resultado; // 6
+echo $a;         // 6
+```
+
+**Postincremento (`$a++`)**
+
+Primero devuelve el valor actual de la variable y después la incrementa.
+
+```php
+$a = 5;
+
+$resultado = $a++;
+
+echo $resultado; // 5
+echo $a;         // 6
+```
+
+La misma diferencia se aplica a los operadores de decremento.
+
+**Predecremento (`--$a`)**
+
+Primero disminuye la variable y después devuelve el nuevo valor.
+
+```php
+$a = 5;
+
+$resultado = --$a;
+
+echo $resultado; // 4
+echo $a;         // 4
+```
+
+**Postdecremento (`$a--`)**
+
+Primero devuelve el valor actual de la variable y después la disminuye.
+
+```php
+$a = 5;
+
+$resultado = $a--;
+
+echo $resultado; // 5
+echo $a;         // 4
+```
+
+### Tabla comparativa
+
+| OPERADOR | VALOR INICIAL | RESULTADO | VALOR FINAL |
+| -------- | ------------- | --------- | ----------- |
+| `++$a` | 5 | 6 | 6 |
+| `$a++` | 5 | 5 | 6 |
+| `--$a` | 5 | 4 | 4 |
+| `$a--` | 5 | 5 | 4 |
+
+**Importante:** en nuestra calculadora, los operadores de incremento y decremento trabajan sobre `$numero1`. El segundo número ingresado no interviene en estas operaciones.
+
+Además, cada vez que enviamos el formulario se realiza una nueva petición al servidor. Por lo tanto, el incremento o decremento no se conserva para el siguiente envío: se vuelve a utilizar el valor que el usuario ingresa en el formulario.
+
+Con esto hemos aprendido a incorporar archivos externos mediante `include()`, reutilizar funciones y trabajar con los operadores de preincremento, postincremento, predecremento y postdecremento.
