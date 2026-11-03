@@ -3991,3 +3991,134 @@ En este caso, cuando no indicamos la edad, PHP utiliza automáticamente el valor
 - Los parámetros permiten recibir información dentro de una función.
 - Los argumentos son los valores que enviamos al llamar a una función.
 - Podemos establecer valores por defecto para utilizar cuando no se proporciona un argumento.
+
+
+## 23.2 Funciones II
+
+### Paso de parámetros por valor y por referencia
+
+Cuando enviamos información a una función, PHP permite hacerlo principalmente de dos maneras: **por valor** o **por referencia**.
+
+La diferencia entre ambas formas está en cómo se manejan los cambios que realizamos sobre los parámetros dentro de la función y si estos afectan o no a las variables originales.
+
+### Paso de parámetros por valor
+
+Por defecto, PHP pasa los argumentos a las funciones por valor.
+
+Esto significa que la función recibe una copia del valor enviado. Por lo tanto, cualquier modificación que realicemos sobre el parámetro dentro de la función no altera directamente la variable original.
+
+**Sintaxis:**
+
+```php
+function ejemplo($param) {
+    $param++;
+}
+```
+
+**Ejemplo:**
+
+```php
+function incrementa($valor1) {
+    $valor1++;
+    return $valor1;
+}
+
+$numero = 5;
+
+echo incrementa($numero); // Resultado: 6
+echo $numero;             // Resultado: 5
+```
+
+En este ejemplo:
+
+- La variable `$numero` contiene inicialmente el valor `5`.
+- Al llamar a la función, se pasa su valor al parámetro `$valor1`.
+- Dentro de la función, `$valor1` se incrementa en una unidad.
+- La función devuelve el resultado `6`.
+- Sin embargo, la variable original `$numero` continúa teniendo el valor `5`.
+
+**¿Para qué sirve?**
+
+El paso por valor es útil cuando queremos que una función trabaje con los datos recibidos sin modificar directamente las variables originales.
+
+### Paso de parámetros por referencia
+
+El paso por referencia permite que una función trabaje directamente con la variable original que recibe como argumento.
+
+Para indicar que un parámetro se recibe por referencia, colocamos el símbolo `&` delante del nombre del parámetro en la declaración de la función.
+
+De esta manera, los cambios realizados sobre ese parámetro también afectan a la variable original.
+
+**Sintaxis:**
+
+```php
+function ejemplo(&$param) {
+    $param++;
+}
+```
+
+**Ejemplo:**
+
+```php
+function incrementa(&$valor1) {
+    $valor1++;
+}
+
+$numero = 5;
+
+incrementa($numero);
+
+echo $numero; // Resultado: 6
+```
+
+En este ejemplo:
+
+- La variable `$numero` contiene inicialmente el valor `5`.
+- Al llamar a la función, se pasa la variable por referencia.
+- Dentro de la función, `$valor1` incrementa su valor en una unidad.
+- Como el parámetro está declarado por referencia, también se modifica la variable original.
+- Al finalizar la función, `$numero` contiene el valor `6`.
+
+**¿Para qué sirve?**
+
+El paso por referencia resulta útil cuando necesitamos que una función modifique directamente una variable original, por ejemplo, para actualizar valores, modificar cadenas de texto o trabajar con estructuras de datos.
+
+### Ejemplo práctico: modificar una cadena de texto
+
+También podemos utilizar el paso por referencia para modificar el contenido de una variable de tipo texto.
+
+```php
+function cambia_mayus(&$param) {
+    $param = strtolower($param);
+    $param = ucwords($param);
+}
+
+$cadena = "hOlA mUnDo";
+
+cambia_mayus($cadena);
+
+echo $cadena; // Resultado: Hola Mundo
+```
+
+En este caso:
+
+- La función recibe la variable `$cadena` por referencia.
+- `strtolower()` convierte todo el texto a minúsculas.
+- `ucwords()` convierte la primera letra de cada palabra a mayúscula.
+- Como trabajamos por referencia, los cambios afectan directamente a `$cadena`.
+
+### Diferencias entre el paso por valor y por referencia
+
+| Característica | Por valor | Por referencia |
+|---|---|---|
+| Declaración | `$param` | `&$param` |
+| Qué recibe la función | El valor del argumento | Una referencia a la variable original |
+| Modifica la variable original | No, por sí mismo | Sí |
+| Uso habitual | Trabajar sin modificar la variable original | Modificar directamente la variable original |
+
+**Importante:**
+
+- En PHP, el paso por valor es el comportamiento predeterminado.
+- Para utilizar el paso por referencia debemos colocar `&` en la declaración del parámetro.
+- El paso por referencia permite modificar la variable original desde dentro de la función.
+- El paso por valor no impide que una función devuelva un resultado diferente mediante `return`; simplemente evita que los cambios locales modifiquen directamente la variable original.
