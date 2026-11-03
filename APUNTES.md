@@ -4374,3 +4374,193 @@ $mazda->girar();
 - **`$this`:** hace referencia al objeto actual.
 - **Cambio de propiedades:** se realiza mediante el operador `->`.
 - **Llamada a métodos:** se realiza mediante el operador `->` y los paréntesis.
+
+
+## 24.3 POO III
+
+### Constructores con parámetros
+
+El constructor puede recibir parámetros, igual que cualquier otra función o método.
+
+Esto permite establecer los valores iniciales de las propiedades al crear una instancia.
+
+Ejemplo:
+
+```php
+class Coche {
+
+    public $ruedas;
+    public $color;
+    public $motor;
+
+    public function __construct($ruedas, $color, $motor) {
+        $this->ruedas = $ruedas;
+        $this->color = $color;
+        $this->motor = $motor;
+    }
+}
+```
+
+Al crear una instancia, enviamos los argumentos al constructor:
+
+```php
+$renault = new Coche(4, "Rojo", 1600);
+$mazda = new Coche(4, "Azul", 2000);
+```
+
+Cada objeto se inicializa con los valores que recibe.
+
+**Observa:**
+
+- Los parámetros se declaran entre los paréntesis de `__construct()`.
+- Los argumentos se indican al crear la instancia.
+- `$this` permite asignar esos valores a las propiedades del objeto.
+
+### Clases sin método constructor
+
+No todas las clases necesitan declarar un constructor.
+
+Si una clase no tiene un constructor propio, PHP permite crear instancias sin enviar argumentos, siempre que no exista un constructor heredado que requiera parámetros.
+
+También podemos asignar valores iniciales directamente al declarar las propiedades.
+
+Ejemplo:
+
+```php
+class Camion {
+
+    public $ruedas = 8;
+    public $color = "Gris";
+    public $motor = 2600;
+
+}
+```
+
+Creamos una instancia normalmente:
+
+```php
+$pegaso = new Camion();
+```
+
+Las propiedades tendrán los valores que hemos indicado en la clase.
+
+A este comportamiento se le suele llamar uso del constructor por defecto: PHP permite crear el objeto sin que hayamos declarado un constructor propio.
+
+### Llamadas a métodos con parámetros
+
+Los métodos también pueden recibir parámetros, igual que las funciones.
+
+Esto permite enviar información al método para que realice una acción con esos datos.
+
+Ejemplo:
+
+```php
+class Coche {
+
+    public $color;
+
+    public function establece_color(string $color_coche) {
+        $this->color = $color_coche;
+
+        echo "El color de este coche es: {$this->color}";
+    }
+}
+```
+
+Llamamos al método enviándole un argumento:
+
+```php
+$renault->establece_color("Rojo");
+$mazda->establece_color("Azul");
+```
+
+Cada llamada envía un valor diferente al método.
+
+### Reutilización de código
+
+Podemos organizar nuestro código en diferentes archivos y reutilizar las clases y funciones que contienen.
+
+Para ello, PHP dispone de instrucciones como:
+
+- `include`: incluye y ejecuta el contenido de otro archivo. Si no puede encontrarlo, genera una advertencia y normalmente continúa la ejecución.
+- `require`: incluye y ejecuta el contenido de otro archivo. Si no puede encontrarlo, produce un error que detiene la ejecución normal.
+
+También existen `include_once` y `require_once`, que evitan incluir el mismo archivo más de una vez durante una ejecución.
+
+Ejemplo de organización:
+
+```text
+proyecto/
+│
+├── index.php
+└── vehiculos.php
+```
+
+En `vehiculos.php` declaramos las clases:
+
+```php
+<?php
+
+class Coche {
+    // Propiedades y métodos
+}
+
+class Camion {
+    // Propiedades y métodos
+}
+
+?>
+```
+
+En `index.php` incluimos el archivo:
+
+```php
+<?php
+
+include("/vehiculos.php");
+
+$renault = new Coche();
+
+?>
+```
+
+De esta manera, podemos utilizar las clases declaradas en `vehiculos.php` desde `index.php`, sin tener que volver a escribir sus definiciones.
+
+### Interpolación de variables
+
+La interpolación permite insertar variables dentro de una cadena de texto utilizando comillas dobles.
+
+Ejemplo:
+
+```php
+$nombre = "Renault";
+
+echo "El vehículo es un $nombre";
+```
+
+También podemos utilizar llaves para delimitar la variable:
+
+```php
+echo "El vehículo es un {$nombre}";
+```
+
+Las llaves son especialmente útiles cuando queremos insertar propiedades de un objeto:
+
+```php
+echo "El camión es de color {$pegaso->color}";
+echo "Tiene {$pegaso->ruedas} ruedas";
+```
+
+**Importante:**
+
+- La interpolación funciona con cadenas delimitadas por comillas dobles.
+- Las comillas simples no interpretan las variables: las muestran como texto literal.
+- Las llaves permiten delimitar claramente la expresión que queremos insertar.
+
+### Resumen
+
+- **Constructor con parámetros:** permite establecer los valores iniciales de un objeto al crearlo.
+- **Clase sin constructor propio:** puede crear instancias sin argumentos mediante el constructor por defecto de PHP.
+- **Métodos con parámetros:** reciben argumentos para realizar acciones con esos datos.
+- **Reutilización de código:** permite utilizar clases y funciones declaradas en otros archivos mediante `include` o `require`.
+- **Interpolación:** permite insertar variables y propiedades de objetos dentro de cadenas con comillas dobles.
