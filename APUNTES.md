@@ -4236,3 +4236,141 @@ En este ejemplo:
 **Importante:** una clase es la plantilla que define la estructura de los objetos, mientras que una instancia es cada objeto concreto que creamos a partir de esa clase.
 
 Podemos crear tantas instancias como necesitemos utilizando una misma clase.
+
+
+## 24.2 POO II
+
+### Propiedades y métodos
+
+Las **propiedades** son variables que pertenecen a una clase y almacenan los datos o características de los objetos.
+
+Los **métodos** son funciones declaradas dentro de una clase y representan las acciones o comportamientos que pueden realizar sus objetos.
+
+### Constructor
+
+El constructor es un método especial que se ejecuta automáticamente cuando creamos una nueva instancia de una clase.
+
+En PHP se declara utilizando `__construct()`.
+
+Su finalidad es establecer el estado inicial del objeto, es decir, asignar valores iniciales a sus propiedades.
+
+Ejemplo:
+
+```php
+class Coche {
+
+    public $ruedas;
+    public $color;
+    public $motor;
+
+    public function __construct() {
+        $this->ruedas = 4;
+        $this->color = "";
+        $this->motor = 1600;
+    }
+}
+```
+
+**Observa:**
+
+- `__construct()` es el constructor de la clase.
+- Se ejecuta automáticamente al utilizar `new`.
+- `$this` hace referencia al objeto actual.
+- `->` permite acceder a las propiedades y métodos del objeto.
+
+Cuando creamos una instancia:
+
+```php
+$renault = new Coche();
+```
+
+El constructor se ejecuta automáticamente y asigna los valores iniciales:
+
+- Ruedas: 4
+- Color: vacío
+- Motor: 1600
+
+### Cambio de propiedades
+
+Podemos modificar las propiedades de un objeto después de crearlo utilizando el operador `->`.
+
+Ejemplo:
+
+```php
+$renault->color = "rojo";
+$renault->motor = 2000;
+```
+
+De esta manera, cambiamos los valores de las propiedades del objeto `$renault`.
+
+Cada instancia tiene sus propios valores, por lo que modificar una propiedad de un objeto no modifica automáticamente la de los demás.
+
+### Llamadas a métodos
+
+Para ejecutar un método de un objeto utilizamos el operador `->`, seguido del nombre del método y los paréntesis.
+
+Ejemplo:
+
+```php
+$renault->arrancar();
+$renault->girar();
+$renault->frenar();
+```
+
+Cada llamada ejecuta el método correspondiente del objeto.
+
+### Ejemplo completo
+
+```php
+<?php
+
+class Coche {
+
+    public $ruedas;
+    public $color;
+    public $motor;
+
+    public function __construct() {
+        $this->ruedas = 4;
+        $this->color = "";
+        $this->motor = 1600;
+    }
+
+    public function arrancar() {
+        echo "Estoy arrancando";
+        echo "<br>";
+    }
+
+    public function girar() {
+        echo "Estoy girando";
+        echo "<br>";
+    }
+
+    public function frenar() {
+        echo "Estoy frenando";
+        echo "<br>";
+    }
+}
+
+$renault = new Coche();
+$mazda = new Coche();
+$seat = new Coche();
+
+$renault->color = "Rojo";
+$mazda->color = "Azul";
+$seat->color = "Negro";
+
+$mazda->girar();
+
+?>
+```
+
+### Resumen
+
+- **Propiedades:** almacenan los datos o características de un objeto.
+- **Métodos:** representan las acciones que puede realizar un objeto.
+- **Constructor:** método especial que se ejecuta al crear una instancia.
+- **`__construct()`:** nombre que se utiliza para declarar el constructor en PHP.
+- **`$this`:** hace referencia al objeto actual.
+- **Cambio de propiedades:** se realiza mediante el operador `->`.
+- **Llamada a métodos:** se realiza mediante el operador `->` y los paréntesis.
