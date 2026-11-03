@@ -2672,7 +2672,7 @@ La conversión a entero no redondea el número; simplemente elimina la parte dec
 - El casting explícito permite convertir manualmente una variable utilizando expresiones como `(int)`, `(float)` o `(string)`.
 
 
-## 20. Estructuras Condicionales I
+## 20.1 Estructuras Condicionales I
 
 En este apartado veremos el uso de las estructuras condicionales `if`, los operadores lógicos y la prioridad de los operadores en PHP.
 
@@ -3079,7 +3079,7 @@ En este apartado aprendimos:
 - A validar datos recibidos desde un formulario mediante `$_POST`.
 
 
-## 20.1 Estructuras Condicionales II
+## 20.2 Estructuras Condicionales II
 
 ### Operador ternario
 
@@ -3270,3 +3270,236 @@ Finalmente, mostramos el resultado utilizando `echo`.
 - Para condiciones más complejas o con varias instrucciones, es preferible utilizar `if`, `elseif` y `else`.
 
 **Importante:** el operador ternario no reemplaza completamente a las estructuras condicionales. Es una alternativa abreviada para situaciones en las que necesitamos elegir entre dos expresiones.
+
+
+## 20.3 Estructuras Condicionales III
+
+### Uso de Switch Case
+
+La estructura `switch` sirve para evaluar una expresión y ejecutar un bloque de código dependiendo del valor que tenga. Es especialmente útil cuando necesitamos comparar una misma variable con varios valores posibles.
+
+A diferencia de `if` y `elseif`, que permiten evaluar condiciones más complejas, `switch` compara una expresión con distintos valores mediante `case`.
+
+**Sintaxis:**
+
+```php
+switch ($variable) {
+    case valor1:
+        // Código que se ejecuta si coincide con valor1
+        break;
+
+    case valor2:
+        // Código que se ejecuta si coincide con valor2
+        break;
+
+    default:
+        // Código que se ejecuta si no coincide con ningún caso
+}
+```
+
+- `switch`: indica la expresión que queremos evaluar.
+- `case`: establece un valor que se compara con la expresión.
+- `break`: detiene la ejecución del `switch` para evitar que continúe ejecutando los siguientes casos.
+- `default`: se ejecuta cuando ninguno de los casos anteriores coincide. Es opcional.
+
+**Ejemplo:**
+
+```php
+$dia = "lunes";
+
+switch ($dia) {
+    case "lunes":
+        echo "Hoy comienza la semana.";
+        break;
+
+    case "viernes":
+        echo "¡Ya casi termina la semana!";
+        break;
+
+    case "sábado":
+    case "domingo":
+        echo "Es fin de semana.";
+        break;
+
+    default:
+        echo "Es un día entre semana.";
+}
+```
+
+En este ejemplo, PHP compara el contenido de `$dia` con cada uno de los valores indicados en los `case`. Si encuentra una coincidencia, ejecuta el código correspondiente.
+
+Observa que los casos de sábado y domingo comparten el mismo bloque de código. Esto es posible porque no colocamos un `break` entre ambos.
+
+**Importante:** No podemos escribir condiciones como `case < 18` o `case >= 18`, porque `case` espera un valor para comparar, no una condición.
+
+Si necesitamos evaluar condiciones, podemos utilizar `switch (true)`:
+
+```php
+$edad = 20;
+
+switch (true) {
+    case ($edad < 18):
+        echo "Eres menor de edad";
+        break;
+
+    case ($edad >= 18):
+        echo "Eres mayor de edad";
+        break;
+
+    default:
+        echo "Edad no válida";
+}
+```
+
+En este caso, `switch` evalúa cada condición y ejecuta el primer `case` cuyo resultado sea `true`.
+
+### Sintaxis alternativa
+
+PHP también permite escribir `switch` utilizando dos puntos y `endswitch`:
+
+```php
+switch ($variable):
+    case valor1:
+        // Código
+        break;
+
+    case valor2:
+        // Código
+        break;
+
+    default:
+        // Código
+endswitch;
+```
+
+Esta sintaxis alternativa es útil cuando mezclamos PHP con HTML.
+
+### Ejemplo práctico: validar dos campos con Switch Case
+
+Vamos a crear un formulario que solicite un nombre de usuario y una contraseña. Utilizaremos `switch (true)` para comprobar si ambos datos coinciden con alguno de los usuarios autorizados.
+
+**Archivo 1: `index.html`**
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Condicionales III</title>
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            background-color: #FFC;
+            padding: 5px;
+            border: #666 5px solid;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Uso de Switch</h1>
+    <hr>
+
+    <form action="validacion_condicionales.php"
+          method="POST"
+          name="datos_usuario"
+          id="datos_usuario">
+
+        <table width="15%" align="center">
+
+            <tr>
+                <td>Nombre:</td>
+                <td>
+                    <input type="text"
+                           name="nombre_usuario"
+                           id="nombre_usuario"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Contraseña:</td>
+                <td>
+                    <input type="password"
+                           name="contra_usuario"
+                           id="contra_usuario"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" align="center">
+                    <input type="submit"
+                           value="Enviar"
+                           name="enviando"
+                           id="enviando">
+                </td>
+            </tr>
+
+        </table>
+
+    </form>
+
+</body>
+</html>
+```
+
+**Archivo 2: `validacion_condicionales.php`**
+
+```php
+<?php
+
+if (isset($_POST["enviando"])) {
+
+    $nombre = $_POST["nombre_usuario"];
+    $contra = $_POST["contra_usuario"];
+
+    switch (true) {
+
+        case ($nombre == "Juan" && $contra == "JJJJ"):
+            echo "Usuario autorizado. Hola Juan.";
+            break;
+
+        case ($nombre == "María" && $contra == "MMMM"):
+            echo "Usuario autorizado. Hola María.";
+            break;
+
+        case ($nombre == "Pedro" && $contra == "PPPP"):
+            echo "Usuario autorizado. Hola Pedro.";
+            break;
+
+        default:
+            echo "Usuario no autorizado.";
+    }
+
+}
+
+?>
+```
+
+**¿Cómo funciona?**
+
+1. El usuario introduce su nombre y contraseña en el formulario.
+2. Al pulsar el botón Enviar, los datos se envían mediante el método `POST` al archivo `validacion_condicionales.php`.
+3. PHP comprueba que el formulario se haya enviado mediante `isset()`.
+4. `switch (true)` evalúa las condiciones de cada `case`.
+5. Para autorizar al usuario, deben coincidir tanto el nombre como la contraseña.
+6. Si ninguna combinación coincide, se ejecuta `default` y se muestra el mensaje de acceso no autorizado.
+
+**Ejemplos de acceso:**
+
+| Nombre | Contraseña | Resultado |
+|---|---|---|
+| Juan | JJJJ | Usuario autorizado |
+| María | MMMM | Usuario autorizado |
+| Pedro | PPPP | Usuario autorizado |
+| Juan | MMMM | Usuario no autorizado |
+| Carlos | CCCC | Usuario no autorizado |
+
+**Importante:** Este ejemplo es únicamente didáctico. En una aplicación real no debemos guardar contraseñas en texto plano ni validar usuarios con contraseñas escritas directamente en el código. Para ello se utilizan mecanismos como `password_hash()` y `password_verify()`.
