@@ -3768,4 +3768,226 @@ for ($i = 0; $i <= 10; $i++) {
 En este ejemplo, el bucle comienza en 0 y se ejecuta hasta que `$i` alcanza el valor 6. En ese momento se muestra el mensaje "Bucle interrumpido" y la sentencia `break` detiene el bucle.
 
 **Importante:** cuando se ejecuta `break`, el programa sale del bucle inmediatamente y continúa con las instrucciones que se encuentren después de él.
+
+## 23.1 Funciones I
+
+### ¿Qué son las funciones?
+
+Una función es un bloque de código que agrupa un conjunto de instrucciones para realizar una tarea específica. Cada función tiene un nombre que permite identificarla y ejecutarla cuando sea necesario.
+
+Las funciones permiten dividir un programa en bloques independientes, facilitando la organización, la reutilización y el mantenimiento del código.
+
+### ¿Para qué sirven?
+
+Las funciones son una herramienta fundamental en programación y ofrecen varias ventajas:
+
+- **Reutilizar código:** permiten ejecutar las mismas instrucciones tantas veces como sea necesario sin tener que escribirlas nuevamente.
+- **Organizar el programa:** ayudan a dividir programas complejos en bloques más pequeños y fáciles de comprender.
+- **Evitar repeticiones:** permiten agrupar operaciones que necesitamos realizar en diferentes partes del programa.
+- **Facilitar el mantenimiento:** si necesitamos modificar una operación, podemos hacerlo directamente en la función correspondiente, sin tener que buscar y cambiar todas sus repeticiones.
+
+### Tipos de funciones en PHP
+
+En PHP podemos distinguir dos grandes grupos de funciones:
+
+**1. Funciones predefinidas**
+
+Son funciones que ya vienen incorporadas en PHP y que podemos utilizar directamente, sin necesidad de declararlas previamente.
+
+Estas funciones permiten realizar operaciones habituales relacionadas con textos, números, fechas, arrays y muchos otros aspectos del lenguaje.
+
+Algunos ejemplos:
+
+```php
+strlen("Hola");        // Devuelve la longitud de un texto
+strtoupper("hola");    // Convierte el texto a mayúsculas
+strtolower("HOLA");    // Convierte el texto a minúsculas
+sqrt(25);              // Calcula la raíz cuadrada
+date("d/m/Y");         // Devuelve la fecha actual
 ```
+
+Puedes consultar las funciones disponibles en la documentación oficial de PHP:
+
+[Documentación oficial de funciones de PHP](https://www.php.net/manual/es/indexes.functions.php)
+
+**2. Funciones propias o definidas por el usuario**
+
+Son funciones que creamos nosotros mismos para realizar tareas específicas dentro de un programa.
+
+A diferencia de las funciones predefinidas, podemos diseñarlas según las necesidades de nuestro proyecto, estableciendo qué instrucciones ejecutarán y qué información necesitarán recibir.
+
+### Declaración de una función
+
+Para crear una función en PHP utilizamos la palabra reservada `function`, seguida del nombre que queremos asignarle y unos paréntesis.
+
+A continuación, entre llaves `{ }`, escribimos las instrucciones que formarán parte de la función.
+
+**Sintaxis:**
+
+```php
+function nombreFuncion() {
+    // Instrucciones que ejecutará la función
+}
+```
+
+**Ejemplo:**
+
+```php
+function saludar() {
+    echo "Hola, bienvenido a PHP";
+}
+```
+
+En este ejemplo hemos declarado una función llamada `saludar()`, que contiene una instrucción para mostrar un mensaje en pantalla.
+
+Es importante recordar que declarar una función no significa que sus instrucciones se ejecuten automáticamente. Para ello debemos realizar una llamada a la función.
+
+### Ejecución de una función
+
+Para ejecutar una función escribimos su nombre seguido de paréntesis y un punto y coma.
+
+**Ejemplo:**
+
+```php
+function saludar() {
+    echo "Hola, bienvenido a PHP";
+}
+
+// Llamamos a la función
+saludar();
+```
+
+Al ejecutar `saludar();`, PHP ejecuta las instrucciones que se encuentran dentro de la función.
+
+Podemos llamar a una misma función tantas veces como necesitemos:
+
+```php
+saludar();
+saludar();
+saludar();
+```
+
+En este caso, el mensaje se mostrará tres veces.
+
+### Parámetros de las funciones
+
+Los parámetros permiten que una función reciba información desde el lugar donde es llamada. De esta manera, podemos crear funciones más flexibles y reutilizables, capaces de trabajar con diferentes valores.
+
+Los parámetros se declaran dentro de los paréntesis de la función y se comportan como variables locales, que reciben los valores enviados durante su ejecución.
+
+**Ejemplo:**
+
+```php
+function saludar($nombre) {
+    echo "Hola, " . $nombre;
+}
+
+// Llamamos a la función enviándole un valor
+saludar("Carlos");
+```
+
+En este ejemplo:
+
+- `$nombre` es el **parámetro** declarado en la función.
+- `"Carlos"` es el **argumento** que enviamos al llamar a la función.
+- La función recibe ese valor y lo utiliza para construir el mensaje.
+
+**Una función puede recibir uno o varios parámetros.**
+
+**Ejemplo con dos parámetros:**
+
+```php
+function sumar($numero1, $numero2) {
+    echo $numero1 + $numero2;
+}
+
+// Enviamos dos argumentos
+sumar(10, 5);
+```
+
+En este caso, la función recibe dos valores, los suma y muestra el resultado.
+
+Podemos utilizar la misma función con argumentos diferentes:
+
+```php
+sumar(10, 5);    // Resultado: 15
+sumar(20, 8);    // Resultado: 28
+sumar(100, 50); // Resultado: 150
+```
+
+De esta forma, reutilizamos una misma función para realizar diferentes operaciones.
+
+### Parámetros con valores por defecto
+
+PHP permite asignar valores por defecto a los parámetros de una función. Esto significa que, si al llamar a la función no proporcionamos un argumento para ese parámetro, se utilizará automáticamente el valor que hayamos establecido en su declaración.
+
+Para asignar un valor por defecto utilizamos el operador de asignación `=`.
+
+**Sintaxis:**
+
+```php
+function nombreFuncion($parametro = valorPorDefecto) {
+    // Instrucciones de la función
+}
+```
+
+**Ejemplo:**
+
+```php
+function saludar($nombre = "invitado") {
+    echo "Hola, " . $nombre;
+}
+
+// Utilizamos el valor por defecto
+saludar();
+
+// Enviamos un argumento diferente
+saludar("Carlos");
+```
+
+En este ejemplo:
+
+- `$nombre` tiene asignado `"invitado"` como valor por defecto.
+- Cuando ejecutamos `saludar()` sin argumentos, se utiliza el valor `"invitado"`.
+- Cuando ejecutamos `saludar("Carlos")`, el valor enviado sustituye al valor por defecto.
+
+**Resultados:**
+
+```text
+Hola, invitado
+Hola, Carlos
+```
+
+También podemos utilizar valores por defecto en funciones que reciben varios parámetros.
+
+**Ejemplo:**
+
+```php
+function presentar($nombre, $edad = 18) {
+    echo "Mi nombre es " . $nombre . " y tengo " . $edad . " años.";
+}
+
+// Enviamos los dos argumentos
+presentar("Carlos", 25);
+
+// Solo enviamos el primer argumento
+presentar("Ana");
+```
+
+En este caso, cuando no indicamos la edad, PHP utiliza automáticamente el valor `18`.
+
+**Importante:**
+
+- Los parámetros con valores por defecto deben colocarse después de los parámetros obligatorios.
+- Si enviamos un argumento para un parámetro que tiene un valor por defecto, se utilizará el argumento enviado.
+- Si omitimos ese argumento, se utilizará el valor por defecto establecido en la declaración.
+
+### Resumen
+
+- Las funciones son bloques de código que realizan tareas específicas.
+- PHP dispone de funciones predefinidas que podemos utilizar directamente.
+- También podemos crear nuestras propias funciones mediante la palabra reservada `function`.
+- Para ejecutar una función debemos llamarla utilizando su nombre y paréntesis.
+- Los parámetros permiten recibir información dentro de una función.
+- Los argumentos son los valores que enviamos al llamar a una función.
+- Podemos establecer valores por defecto para utilizar cuando no se proporciona un argumento.
