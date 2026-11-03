@@ -3503,3 +3503,100 @@ if (isset($_POST["enviando"])) {
 | Carlos | CCCC | Usuario no autorizado |
 
 **Importante:** Este ejemplo es únicamente didáctico. En una aplicación real no debemos guardar contraseñas en texto plano ni validar usuarios con contraseñas escritas directamente en el código. Para ello se utilizan mecanismos como `password_hash()` y `password_verify()`.
+
+
+## 20.4 Estructuras Condicionales IV
+
+### Expresión Match
+
+La expresión `match` se incorporó en la versión **PHP 8.0**. Es útil cuando necesitamos comparar una misma expresión con diferentes valores y obtener un resultado dependiendo de cuál coincida.
+
+A diferencia de `switch`, `match` es una expresión que devuelve un valor. Esto permite almacenar directamente el resultado en una variable.
+
+**Diferencias entre Switch y Match:**
+
+| Switch | Match |
+|---|---|
+| Es una estructura de control. | Es una expresión que devuelve un valor. |
+| Utiliza comparación flexible (`==`). | Utiliza comparación estricta (`===`). |
+| Necesita `break` para evitar ejecutar otros casos. | No necesita `break`. |
+| Puede continuar ejecutando los siguientes casos si omitimos `break`. | Solo ejecuta el caso que coincide. |
+| Puede no tener `default`. | Puede no tener `default`, pero si no hay coincidencia genera un error. |
+
+**Sintaxis:**
+
+```php
+$resultado = match ($variable) {
+    valor1 => resultado1,
+    valor2 => resultado2,
+    valor3 => resultado3,
+    default => resultado_por_defecto,
+};
+```
+
+- `match`: indica la expresión que queremos evaluar.
+- `=>`: separa el valor que queremos comparar del resultado que se devolverá.
+- `default`: establece el resultado que se devolverá cuando no coincida ninguno de los valores anteriores. Es opcional.
+- `;`: finaliza la expresión `match` cuando se utiliza como parte de una asignación.
+
+**Ejemplo:**
+
+```php
+$estado = 2;
+
+$resultado = match ($estado) {
+    1 => "pendiente",
+    2 => "en proceso",
+    3 => "completado",
+    default => "desconocido",
+};
+
+echo $resultado; // en proceso
+```
+
+**¿Cómo funciona?**
+
+1. Declaramos la variable `$estado` con el valor `2`.
+2. `match` compara ese valor con cada uno de los casos.
+3. Encuentra la coincidencia con el valor `2`.
+4. Devuelve el texto `"en proceso"` y lo almacena en `$resultado`.
+5. Finalmente, `echo` muestra el contenido de `$resultado`.
+
+
+**Evaluación de múltiples valores**
+
+La expresión `match` también permite evaluar varios valores dentro de un mismo caso (`case`), separándolos mediante comas.
+
+Esto es útil cuando diferentes valores deben devolver el mismo resultado, evitando tener que repetir instrucciones.
+
+**Sintaxis:**
+
+```php
+$resultado = match ($variable) {
+    valor1, valor2, valor3 => resultado1,
+    valor4, valor5 => resultado2,
+    default => resultado_por_defecto,
+};
+```
+
+**Ejemplo:**
+
+```php
+$dia = 6;
+
+$resultado = match ($dia) {
+    1, 2, 3, 4, 5 => "Día laboral",
+    6, 7 => "Fin de semana",
+    default => "Día no válido",
+};
+
+echo $resultado; // Fin de semana
+```
+
+En este ejemplo:
+
+- Si `$dia` contiene 1, 2, 3, 4 o 5, devuelve "Día laboral".
+- Si `$dia` contiene 6 o 7, devuelve "Fin de semana".
+- Si contiene cualquier otro valor, devuelve "Día no válido".
+
+**Importante:** Cada valor se compara de forma estricta (`===`). Si alguno coincide, se devuelve el resultado correspondiente y no se evalúan los siguientes casos.
