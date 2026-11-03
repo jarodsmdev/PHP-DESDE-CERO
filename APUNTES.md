@@ -3602,7 +3602,7 @@ En este ejemplo:
 **Importante:** Cada valor se compara de forma estricta (`===`). Si alguno coincide, se devuelve el resultado correspondiente y no se evalúan los siguientes casos.
 
 
-## 21. Bucles I
+## 21.1 Bucles I
 
 ### Uso de While y Do While
 
@@ -3712,3 +3712,60 @@ Aunque `$contador` vale 7 y la condición es falsa, el mensaje se muestra una ve
 | La condición se comprueba antes de cada repetición. | La condición se comprueba después de cada repetición. |
 
 **Nota:** Es importante modificar la variable que interviene en la condición para evitar crear un bucle infinito, es decir, un bucle que nunca termina.
+
+
+## 22.2 Bucles II
+
+### Uso del bucle `for`
+
+El bucle `for` es una estructura de control que permite ejecutar repetidamente un bloque de código mientras se cumpla una condición.
+
+Se utiliza principalmente cuando conocemos de antemano cuántas veces queremos repetir una operación. Por ejemplo, para recorrer una lista, mostrar una secuencia de números o repetir una tarea un número determinado de veces.
+
+### Sintaxis
+
+```php
+for (inicialización; condición; incremento) {
+    // Instrucciones que se repetirán
+}
+```
+
+El bucle `for` tiene tres partes:
+
+- **Inicialización:** establece el valor inicial de la variable de control.
+- **Condición:** determina si el bucle debe continuar ejecutándose.
+- **Incremento:** modifica el valor de la variable en cada repetición.
+
+### Ejemplo
+
+```php
+for ($i = 0; $i <= 10; $i++) {
+    echo "<p>Hemos entrado en el bucle</p>";
+}
+```
+
+En este ejemplo, el bloque de instrucciones se ejecuta 11 veces, porque la variable `$i` comienza en 0 y el bucle continúa mientras su valor sea menor o igual a 10.
+
+### Sentencia `break`
+
+La sentencia `break` permite interrumpir inmediatamente la ejecución de un bucle, aunque su condición todavía se cumpla.
+
+Se utiliza cuando necesitamos detener una repetición al cumplirse una determinada condición.
+
+### Ejemplo con `break`
+
+```php
+for ($i = 0; $i <= 10; $i++) {
+    echo "<p>Hemos entrado en el bucle</p>";
+
+    if ($i == 6) {
+        echo "<p>Bucle interrumpido</p>";
+        break;
+    }
+}
+```
+
+En este ejemplo, el bucle comienza en 0 y se ejecuta hasta que `$i` alcanza el valor 6. En ese momento se muestra el mensaje "Bucle interrumpido" y la sentencia `break` detiene el bucle.
+
+**Importante:** cuando se ejecuta `break`, el programa sale del bucle inmediatamente y continúa con las instrucciones que se encuentren después de él.
+```
