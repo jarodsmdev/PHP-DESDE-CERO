@@ -3077,3 +3077,196 @@ En este apartado aprendimos:
 - A utilizar paréntesis para controlar el orden de evaluación.
 - A trabajar con las estructuras condicionales `if`, `elseif` y `else`.
 - A validar datos recibidos desde un formulario mediante `$_POST`.
+
+
+## 20.1 Estructuras Condicionales II
+
+### Operador ternario
+
+El operador ternario permite evaluar una condición y devolver un valor dependiendo de si dicha condición es verdadera o falsa.
+
+Se utiliza principalmente como una forma abreviada de escribir una estructura condicional `if / else`.
+
+Su sintaxis es:
+
+```php
+condicion ? valor_verdadero : valor_falso;
+```
+
+Está compuesto por tres partes:
+
+1. **Condición:** expresión que PHP debe evaluar.
+2. **Valor verdadero:** resultado que se obtiene si la condición se cumple.
+3. **Valor falso:** resultado que se obtiene si la condición no se cumple.
+
+### Ejemplo sencillo
+
+```php
+<?php
+
+$edad = 20;
+$resultado = $edad >= 18 ? "Eres mayor de edad" : "Eres menor de edad";
+echo $resultado;
+
+?>
+```
+
+En este ejemplo:
+
+- Si `$edad` es mayor o igual a 18, se almacena el mensaje "Eres mayor de edad".
+- Si `$edad` es menor que 18, se almacena el mensaje "Eres menor de edad".
+
+El operador ternario evalúa la condición y selecciona uno de los dos valores.
+
+### Comparación con IF / ELSE
+
+El mismo ejemplo anterior podría escribirse utilizando una estructura condicional tradicional:
+
+```php
+<?php
+
+$edad = 20;
+
+if ($edad >= 18) {
+    $resultado = "Eres mayor de edad";
+} else {
+    $resultado = "Eres menor de edad";
+}
+
+echo $resultado;
+
+?>
+```
+
+Ambos ejemplos producen el mismo resultado.
+
+La diferencia es que el operador ternario permite escribir esta evaluación de una manera más compacta.
+
+### Ejemplo práctico: validación de edad mediante operador ternario
+
+Vamos a crear un formulario que solicite la edad del usuario y determine si puede acceder o no a una página.
+
+Para este ejemplo utilizaremos dos archivos:
+
+- `index.html`: contiene el formulario.
+- `validacion_condicionales.php`: recibe la edad y realiza la validación mediante el operador ternario.
+
+**Archivo 1: index.html**
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo Condicionales</title>
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            background-color: #FFC;
+            padding: 5px;
+            border: #666 5px solid;
+        }
+
+        .no_validado {
+            font-size: 18px;
+            color: #F00;
+            font-weight: bold;
+        }
+
+        .validado {
+            font-size: 18px;
+            color: #0C3;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Usando Condicionales</h1>
+    <hr>
+
+    <form action="validacion_condicionales.php" method="POST" name="datos_usuario" id="datos_usuario">
+
+        <table width="15%" align="center">
+
+            <tr>
+                <td>Nombre:</td>
+                <td>
+                    <input type="text" name="nombre_usuario" id="nombre_usuario" required>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Edad:</td>
+                <td>
+                    <input type="number" name="edad_usuario" id="edad_usuario" min="0" required>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" align="center">
+                    <input type="submit" value="Enviar" name="enviando" id="enviando">
+                </td>
+            </tr>
+
+        </table>
+
+    </form>
+
+</body>
+</html>
+```
+
+**Archivo 2: validacion_condicionales.php**
+
+```php
+<?php
+
+if (isset($_POST["enviando"])) {
+    $edad = $_POST["edad_usuario"];
+
+    // Operador ternario
+    $resultado = $edad < 18
+        ? "No puedes acceder. Eres menor de edad."
+        : "Puedes acceder.";
+
+    echo "<p>" . $resultado . "</p>";
+}
+
+?>
+```
+
+### ¿Qué se hizo?
+
+En este ejemplo utilizamos el operador ternario para determinar si el usuario puede acceder dependiendo de su edad.
+
+La instrucción principal es:
+
+```php
+$resultado = $edad < 18
+    ? "No puedes acceder. Eres menor de edad."
+    : "Puedes acceder.";
+```
+
+Su funcionamiento es el siguiente:
+
+- PHP comprueba si `$edad` es menor que 18.
+- Si la condición es verdadera, asigna a `$resultado` el mensaje "No puedes acceder. Eres menor de edad".
+- Si la condición es falsa, asigna a `$resultado` el mensaje "Puedes acceder".
+
+Finalmente, mostramos el resultado utilizando `echo`.
+
+### Resumen
+
+- El operador ternario permite simplificar una estructura `if / else`.
+- Evalúa una condición y devuelve uno de dos posibles resultados.
+- Su sintaxis es `condicion ? valor_verdadero : valor_falso`.
+- Es especialmente útil cuando necesitamos realizar evaluaciones sencillas.
+- Para condiciones más complejas o con varias instrucciones, es preferible utilizar `if`, `elseif` y `else`.
+
+**Importante:** el operador ternario no reemplaza completamente a las estructuras condicionales. Es una alternativa abreviada para situaciones en las que necesitamos elegir entre dos expresiones.
