@@ -4122,3 +4122,117 @@ En este caso:
 - Para utilizar el paso por referencia debemos colocar `&` en la declaración del parámetro.
 - El paso por referencia permite modificar la variable original desde dentro de la función.
 - El paso por valor no impide que una función devuelva un resultado diferente mediante `return`; simplemente evita que los cambios locales modifiquen directamente la variable original.
+
+
+## 24.1 POO I
+
+### ¿Qué es la Programación Orientada a Objetos (POO)?
+
+La Programación Orientada a Objetos, también conocida como POO, es un paradigma de programación que permite organizar el código mediante estructuras llamadas **clases y objetos**.
+
+Este enfoque permite representar elementos del mundo real o conceptos de un programa, agrupando sus características y comportamientos en una misma estructura.
+
+Por ejemplo, si queremos desarrollar un programa para gestionar vehículos, podemos representar un coche mediante sus características (marca, modelo, color) y sus comportamientos (arrancar, frenar, acelerar).
+
+La POO facilita la organización, reutilización y mantenimiento del código, especialmente cuando desarrollamos aplicaciones de mayor tamaño.
+
+### Conceptos fundamentales de la POO
+
+Para comprender la programación orientada a objetos, debemos conocer tres conceptos fundamentales:
+
+**1. Objeto**
+
+Un objeto es una entidad que representa un elemento concreto dentro de un programa. Tiene características y comportamientos propios.
+
+Por ejemplo, podemos representar diferentes coches. Cada uno puede tener una marca, un modelo y un color determinados.
+
+**2. Clase**
+
+Una clase es una estructura o plantilla que define cómo serán los objetos que creemos a partir de ella.
+
+Dentro de una clase podemos definir:
+
+- **Propiedades:** son las variables que representan las características o los datos de un objeto. Por ejemplo: marca, modelo, color y velocidad.
+- **Métodos:** son las funciones que representan las acciones o comportamientos que puede realizar un objeto. Por ejemplo: arrancar, frenar o acelerar.
+
+Por ejemplo, podemos crear una clase llamada `Coche` que contenga las propiedades y los métodos comunes a los diferentes coches que queramos representar.
+
+**3. Instancia**
+
+Una instancia es un objeto concreto que se crea a partir de una clase.
+
+Cuando creamos una instancia, estamos utilizando la estructura definida en una clase para generar un objeto que podrá tener sus propios valores en las propiedades.
+
+Por ejemplo, a partir de una clase llamada `Coche`, podemos crear diferentes instancias:
+
+- Un Renault de color rojo.
+- Un Mazda de color azul.
+- Un Seat de color blanco.
+
+Todos pertenecen a la misma clase, pero cada instancia representa un objeto independiente.
+
+### Creación de clases en PHP
+
+Para declarar una clase en PHP utilizamos la palabra reservada `class`, seguida del nombre que queremos asignarle.
+
+El contenido de la clase se escribe entre llaves `{ }`.
+
+**Sintaxis:**
+
+```php
+class NombreClase {
+
+    // Propiedades
+
+    // Métodos
+
+}
+```
+
+**Ejemplo:**
+
+```php
+class Coche {
+
+}
+```
+
+En este ejemplo hemos declarado una clase llamada `Coche`. Por el momento está vacía, pero posteriormente podremos incorporar sus propiedades y métodos.
+
+Por convención, los nombres de las clases suelen comenzar con una letra mayúscula y utilizar el formato `PascalCase` cuando contienen varias palabras.
+
+### Creación de instancias de una clase
+
+Una vez declarada una clase, podemos crear objetos a partir de ella. Este proceso se conoce como **instanciación**.
+
+Para crear una instancia en PHP utilizamos la palabra reservada `new`, seguida del nombre de la clase y unos paréntesis.
+
+**Sintaxis:**
+
+```php
+$nombreObjeto = new NombreClase();
+```
+
+**Ejemplo:**
+
+```php
+class Coche {
+
+}
+
+// Creamos diferentes instancias de la clase Coche
+$renault = new Coche();
+$mazda = new Coche();
+$seat = new Coche();
+```
+
+En este ejemplo:
+
+- `Coche` es la clase que hemos declarado.
+- `new` permite crear una nueva instancia.
+- `$renault`, `$mazda` y `$seat` son variables que hacen referencia a diferentes objetos.
+- Cada llamada a `new Coche()` crea un objeto independiente de los demás.
+
+**Importante:** una clase es la plantilla que define la estructura de los objetos, mientras que una instancia es cada objeto concreto que creamos a partir de esa clase.
+
+Podemos crear tantas instancias como necesitemos utilizando una misma clase.
