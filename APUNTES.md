@@ -3600,3 +3600,115 @@ En este ejemplo:
 - Si contiene cualquier otro valor, devuelve "Día no válido".
 
 **Importante:** Cada valor se compara de forma estricta (`===`). Si alguno coincide, se devuelve el resultado correspondiente y no se evalúan los siguientes casos.
+
+
+## 21. Bucles I
+
+### Uso de While y Do While
+
+Los bucles son estructuras de control que permiten ejecutar repetidamente un bloque de código mientras se cumpla una determinada condición.
+
+Su finalidad es evitar tener que escribir varias veces las mismas instrucciones, facilitando la repetición de operaciones y tareas.
+
+En PHP existen diferentes tipos de bucles:
+
+- **Bucles indeterminados:** se utilizan cuando no sabemos exactamente cuántas veces se repetirá el código. Su ejecución depende de una condición. Algunos ejemplos son `while` y `do while`.
+- **Bucles determinados:** se utilizan cuando conocemos previamente cuántas veces queremos repetir el código. Un ejemplo es el bucle `for`.
+
+### 1. Bucle While
+
+El bucle `while` ejecuta un bloque de código mientras una condición sea verdadera (`true`).
+
+Antes de ejecutar el código, PHP comprueba si la condición se cumple. Si es verdadera, ejecuta las instrucciones; si es falsa, sale del bucle.
+
+**Sintaxis:**
+
+```php
+while (condicion) {
+    // Código que se repetirá
+}
+```
+
+**Ejemplo:**
+
+```php
+$contador = 1;
+
+while ($contador <= 5) {
+    echo $contador . "<br>";
+    $contador++;
+}
+```
+
+**Resultado:**
+
+```text
+1
+2
+3
+4
+5
+```
+
+En este ejemplo, el bucle comienza con `$contador` en 1 y se repite mientras su valor sea menor o igual a 5. En cada repetición se muestra el valor y se incrementa el contador en una unidad.
+
+**Importante:** Si la condición es falsa desde el principio, el código del bucle no se ejecutará ninguna vez.
+
+### 2. Bucle Do While
+
+El bucle `do while` también permite repetir un bloque de código mientras una condición sea verdadera.
+
+Su principal diferencia respecto a `while` es que primero ejecuta el código y después comprueba la condición. Por este motivo, el bloque de instrucciones se ejecutará al menos una vez, aunque la condición sea falsa desde el principio.
+
+**Sintaxis:**
+
+```php
+do {
+    // Código que se repetirá
+} while (condicion);
+```
+
+**Ejemplo:**
+
+```php
+$contador = 1;
+
+do {
+    echo $contador . "<br>";
+    $contador++;
+} while ($contador <= 5);
+```
+
+**Resultado:**
+
+```text
+1
+2
+3
+4
+5
+```
+
+En este ejemplo, el código se ejecuta y después se comprueba si `$contador` sigue siendo menor o igual a 5. Mientras se cumpla la condición, el bucle continúa.
+
+**Ejemplo para comprobar la diferencia:**
+
+```php
+$contador = 7;
+
+do {
+    echo "El código se ejecutó una vez.";
+} while ($contador < 6);
+```
+
+Aunque `$contador` vale 7 y la condición es falsa, el mensaje se muestra una vez porque `do while` comprueba la condición después de ejecutar el código.
+
+### Diferencias entre While y Do While
+
+| While | Do While |
+|---|---|
+| Comprueba primero la condición. | Ejecuta primero el código. |
+| Puede no ejecutarse ninguna vez. | Se ejecuta al menos una vez. |
+| La condición se comprueba antes de cada repetición. | La condición se comprueba después de cada repetición. |
+
+**Nota:** Es importante modificar la variable que interviene en la condición para evitar crear un bucle infinito, es decir, un bucle que nunca termina.
