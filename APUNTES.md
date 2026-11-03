@@ -2670,3 +2670,410 @@ La conversión a entero no redondea el número; simplemente elimina la parte dec
 - `rand()` genera números enteros aleatorios.
 - El casting implícito permite que PHP determine automáticamente el tipo de dato.
 - El casting explícito permite convertir manualmente una variable utilizando expresiones como `(int)`, `(float)` o `(string)`.
+
+
+## 20. Estructuras Condicionales I
+
+En este apartado veremos el uso de las estructuras condicionales `if`, los operadores lógicos y la prioridad de los operadores en PHP.
+
+Las estructuras condicionales permiten ejecutar diferentes bloques de código dependiendo de si una condición se cumple o no.
+
+Antes de trabajar con `if`, es importante conocer los operadores lógicos, ya que nos permiten combinar varias condiciones.
+
+### Operadores lógicos
+
+Los operadores lógicos permiten evaluar una o varias condiciones y obtener como resultado un valor booleano (`true` o `false`).
+
+| OPERADOR | NOMBRE | FUNCIÓN | EJEMPLO |
+|---|---|---|---|
+| `&&` | Y lógico (AND) | Verdadero si ambas condiciones son verdaderas. | `$a > 5 && $b < 10` |
+| `AND` | Y lógico | Igual que `&&`, pero tiene diferente prioridad. | `$a > 5 AND $b < 10` |
+| `\|\|` | O lógico (OR) | Verdadero si al menos una condición es verdadera. | `$a > 5 \|\| $b < 10` |
+| `OR` | O lógico | Igual que `\|\|`, pero tiene diferente prioridad. | `$a > 5 OR $b < 10` |
+| `XOR` | O exclusivo | Verdadero si solamente una condición es verdadera. | `$a > 5 XOR $b < 10` |
+| `!` | Negación (NOT) | Invierte el valor lógico: verdadero pasa a falso y viceversa. | `!($a > 5)` |
+
+Ejemplo:
+
+```php
+<?php
+
+$a = 10;
+$b = 3;
+
+$resultado1 = ($a > 5 && $b < 10);
+$resultado2 = ($a > 5 || $b > 10);
+$resultado3 = ($a > 5 XOR $b > 10);
+$resultado4 = !($a > 5);
+
+var_dump($resultado1); // true
+var_dump($resultado2); // true
+var_dump($resultado3); // false
+var_dump($resultado4); // false
+
+?>
+```
+
+En este ejemplo:
+
+- `&&` devuelve `true` porque ambas condiciones son verdaderas.
+- `||` devuelve `true` porque al menos una condición es verdadera.
+- `XOR` devuelve `false` porque ambas condiciones son verdaderas. Para que sea verdadero, solamente una debe cumplirse.
+- `!` invierte el resultado de la condición.
+
+### Prioridad de operadores
+
+Cuando PHP encuentra una expresión con varios operadores, debe determinar cuál de ellos se ejecuta primero.
+
+Por ejemplo:
+
+```php
+$resultado = 2 + 3 * 6;
+```
+
+El resultado es `20`, porque el operador de multiplicación (`*`) tiene prioridad sobre el operador de suma (`+`).
+
+Primero se realiza la multiplicación:
+
+```text
+3 * 6 = 18
+```
+
+Después se realiza la suma:
+
+```text
+2 + 18 = 20
+```
+
+Sin embargo, podemos modificar el orden de evaluación utilizando paréntesis:
+
+```php
+$resultado = (2 + 3) * 6;
+```
+
+En este caso, primero se realiza la suma:
+
+```text
+2 + 3 = 5
+```
+
+Después se realiza la multiplicación:
+
+```text
+5 * 6 = 30
+```
+
+Por lo tanto, los paréntesis permiten establecer qué operación queremos realizar primero.
+
+### Diferencia de prioridad entre AND y &&
+
+En PHP existe una diferencia importante entre los operadores `AND` y `&&`.
+
+Aunque ambos realizan la operación lógica Y, **no tienen la misma prioridad**.
+
+Veamos el siguiente ejemplo:
+
+```php
+<?php
+
+$var1 = true;
+$var2 = false;
+
+$resultado1 = $var1 && $var2;
+$resultado2 = $var1 AND $var2;
+
+var_dump($resultado1);
+var_dump($resultado2);
+
+?>
+```
+
+A primera vista podríamos pensar que ambas variables deberían almacenar `false`, porque:
+
+```text
+true AND false = false
+```
+
+Sin embargo, el resultado es diferente:
+
+- `$resultado1` almacena `false`.
+- `$resultado2` almacena `true`.
+
+¿Por qué sucede esto?
+
+La explicación está en la prioridad de los operadores.
+
+En PHP, el operador de asignación (`=`) tiene mayor prioridad que `AND`, pero menor prioridad que `&&`.
+
+Por lo tanto, esta expresión:
+
+```php
+$resultado1 = $var1 && $var2;
+```
+
+Se interpreta como:
+
+```php
+$resultado1 = ($var1 && $var2);
+```
+
+En cambio, esta otra expresión:
+
+```php
+$resultado2 = $var1 AND $var2;
+```
+
+Se interpreta como:
+
+```php
+($resultado2 = $var1) AND $var2;
+```
+
+Primero se asigna `true` a `$resultado2`. Después se evalúa la operación lógica `AND`, cuyo resultado no se almacena en `$resultado2`.
+
+**Conclusión:** cuando utilizamos `AND` u `OR` en expresiones de asignación, debemos tener especial cuidado con la prioridad de los operadores. Para evitar confusiones, podemos utilizar paréntesis.
+
+La documentación oficial de PHP explica estos operadores y su prioridad:
+
+- [Operadores lógicos](https://www.php.net/manual/es/language.operators.logical.php)
+- [Precedencia de operadores](https://www.php.net/manual/es/language.operators.precedence.php)
+
+### Ejemplo práctico: prioridad de operadores
+
+Vamos a crear un archivo llamado `index.php` para comprobar la diferencia entre `AND` y `&&`.
+
+**Archivo: index.php**
+
+```php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prioridad de Operadores</title>
+</head>
+<body>
+
+    <h1>Prioridad de Operadores</h1>
+    <hr>
+
+    <a href="condicionales.php">Ejemplo de condicionales</a>
+
+    <div></div>
+    <br>
+
+    <?php
+
+        $var1 = true;
+        $var2 = false;
+
+        $resultado = $var1 AND $var2;
+
+        if ($resultado == true) {
+            echo "Correcto";
+        } else {
+            echo "Incorrecto";
+        }
+
+    ?>
+
+</body>
+</html>
+```
+
+¿Qué sucede en este ejemplo?
+
+Aunque `$var1` es `true` y `$var2` es `false`, la variable `$resultado` almacena `true`.
+
+Esto sucede porque la asignación tiene mayor prioridad que el operador `AND`.
+
+Si cambiamos la expresión por:
+
+```php
+$resultado = $var1 && $var2;
+```
+
+El resultado será `false`.
+
+### Estructuras condicionales: IF
+
+La estructura `if` permite ejecutar un bloque de instrucciones solamente cuando una condición es verdadera.
+
+Su sintaxis es:
+
+```php
+if (condicion) {
+    // Instrucciones si la condición es verdadera.
+}
+```
+
+También podemos utilizar `else` para ejecutar otro bloque cuando la condición sea falsa:
+
+```php
+if (condicion) {
+    // Instrucciones si la condición es verdadera.
+} else {
+    // Instrucciones si la condición es falsa.
+}
+```
+
+Cuando necesitamos evaluar varias condiciones podemos utilizar `elseif`:
+
+```php
+if (condicion1) {
+    // Instrucciones si la primera condición es verdadera.
+} elseif (condicion2) {
+    // Instrucciones si la segunda condición es verdadera.
+} else {
+    // Instrucciones si ninguna condición se cumple.
+}
+```
+
+PHP evalúa las condiciones en orden. Cuando encuentra una condición verdadera, ejecuta su bloque y no continúa evaluando las siguientes alternativas.
+
+### Ejemplo práctico: validación mediante condicionales
+
+Vamos a crear un pequeño formulario para solicitar el nombre y la edad de un usuario.
+
+Dependiendo de la edad ingresada, PHP mostrará un mensaje diferente.
+
+Para este ejemplo utilizaremos tres archivos:
+
+- `index.php`: contiene el ejemplo de prioridad de operadores.
+- `condicionales.php`: contiene el formulario.
+- `validacion_condicionales.php`: recibe los datos y ejecuta las condiciones.
+
+**Archivo: condicionales.php**
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo Condicionales</title>
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            background-color: #FFC;
+            padding: 5px;
+            border: #666 5px solid;
+        }
+
+        .no_validado {
+            font-size: 18px;
+            color: #F00;
+            font-weight: bold;
+        }
+
+        .validado {
+            font-size: 18px;
+            color: #0C3;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Usando Condicionales</h1>
+    <hr>
+
+    <a href="./index.php">Volver</a>
+
+    <form action="validacion_condicionales.php" method="POST" name="datos_usuario" id="datos_usuario">
+
+        <table width="15%" align="center">
+
+            <tr>
+                <td>Nombre:</td>
+                <td>
+                    <input type="text" name="nombre_usuario" id="nombre_usuario" required>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Edad:</td>
+                <td>
+                    <input type="number" name="edad_usuario" id="edad_usuario" min="0" required>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" align="center">
+                    <input type="submit" value="Enviar" name="enviando" id="enviando">
+                </td>
+            </tr>
+
+        </table>
+
+    </form>
+
+</body>
+</html>
+```
+
+**Archivo: validacion_condicionales.php**
+
+Este archivo recibe los datos del formulario y utiliza una estructura `if`, `elseif` y `else` para determinar qué mensaje mostrar.
+
+```php
+<?php
+    if (isset($_POST["enviando"])) {
+        $edad = $_POST["edad_usuario"];
+
+        if ($edad <= 18) {
+            echo  "Eres menor de edad";
+        } elseif ($edad <= 40) {
+            echo "Eres joven";
+        } elseif ($edad <= 65) {
+            echo "Eres maduro";
+        } else {
+            echo "Cuídate";
+        }
+    }
+?>
+```
+
+### ¿Qué se hizo?
+
+**1. Creamos un formulario HTML**
+
+En `condicionales.php` solicitamos dos datos:
+
+- Nombre del usuario.
+- Edad del usuario.
+
+El formulario utiliza el método `POST` para enviar la información al archivo `validacion_condicionales.php`.
+
+**2. Recuperamos los datos mediante PHP**
+
+Utilizamos `$_POST` para obtener los valores enviados:
+
+```php
+$edad = $_POST["edad_usuario"];
+```
+
+**3. Evaluamos las condiciones**
+
+Utilizamos `if`, `elseif` y `else` para determinar qué mensaje corresponde según la edad:
+
+- Si la edad es menor o igual a 18, mostramos "eres menor de edad".
+- Si es mayor de 18 y menor o igual a 40, mostramos "eres joven".
+- Si es mayor de 40 y menor o igual a 65, mostramos "eres maduro".
+- Si es mayor de 65, mostramos "cuídate".
+
+### Resumen
+
+En este apartado aprendimos:
+
+- A utilizar operadores lógicos: `&&`, `AND`, `||`, `OR`, `XOR` y `!`.
+- A combinar varias condiciones.
+- A comprender la prioridad de los operadores.
+- A identificar la diferencia de prioridad entre `AND` y `&&`.
+- A utilizar paréntesis para controlar el orden de evaluación.
+- A trabajar con las estructuras condicionales `if`, `elseif` y `else`.
+- A validar datos recibidos desde un formulario mediante `$_POST`.
