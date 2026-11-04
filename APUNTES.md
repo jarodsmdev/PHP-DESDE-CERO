@@ -4564,3 +4564,115 @@ echo "Tiene {$pegaso->ruedas} ruedas";
 - **Métodos con parámetros:** reciben argumentos para realizar acciones con esos datos.
 - **Reutilización de código:** permite utilizar clases y funciones declaradas en otros archivos mediante `include` o `require`.
 - **Interpolación:** permite insertar variables y propiedades de objetos dentro de cadenas con comillas dobles.
+
+
+## 24.4 POO IV: Herencia
+
+### ¿Qué es la herencia en POO?
+
+La herencia es una característica de la Programación Orientada a Objetos que permite crear una clase nueva a partir de otra clase existente.
+
+La clase nueva puede heredar las propiedades y los métodos accesibles de la clase original, evitando tener que escribir nuevamente el mismo código.
+
+Además, la nueva clase puede incorporar sus propias propiedades y métodos, o modificar el comportamiento de los métodos heredados.
+
+### ¿Cuál es la finalidad de la herencia?
+
+La finalidad principal de la herencia es **reutilizar código y facilitar la organización de las clases**.
+
+Entre sus ventajas encontramos:
+
+- Reutilizar propiedades y métodos que ya existen.
+- Evitar la repetición innecesaria de código.
+- Organizar las clases mediante relaciones de parentesco.
+- Ampliar o modificar las funcionalidades de una clase existente.
+- Facilitar el mantenimiento y la ampliación de los programas.
+
+### Superclases y subclases
+
+En la herencia encontramos dos conceptos fundamentales:
+
+**Superclase:**
+
+Es la clase original de la cual otras clases pueden heredar sus propiedades y métodos. También se conoce como clase padre o clase base.
+
+**Subclase:**
+
+Es la clase que hereda las propiedades y los métodos accesibles de otra clase. También se conoce como clase hija o clase derivada.
+
+Por ejemplo, podemos tener una clase llamada `Coche` que contenga propiedades y métodos comunes a los vehículos. A partir de ella podemos crear una clase llamada `Camion`, que heredará esas características y podrá incorporar otras propias.
+
+### Sintaxis de la herencia en PHP
+
+Para establecer una relación de herencia en PHP se utiliza la palabra clave `extends`.
+
+```php
+class Coche {
+    // Propiedades y métodos de la superclase
+}
+
+class Camion extends Coche {
+    // Propiedades y métodos propios de la subclase
+}
+```
+
+En este ejemplo, `Coche` es la superclase y `Camion` es la subclase.
+
+La palabra clave `extends` indica que Camion hereda de Coche.
+
+### Ejemplo de herencia
+
+Vamos a utilizar dos clases: `Coche` y `Camion`.
+
+La clase `Coche` será la superclase y contendrá propiedades como ruedas, color y motor, además de métodos como arrancar(), girar() y frenar().
+
+La clase `Camion` será la subclase y heredará las propiedades y los métodos de Coche. También podrá establecer sus propios valores iniciales y modificar el comportamiento de algunos métodos.
+
+### Reutilización de código
+
+Una de las principales ventajas de la herencia es que permite utilizar los métodos y las propiedades de una superclase sin tener que volver a escribirlos en la subclase.
+
+Por ejemplo, si la clase Coche tiene los métodos arrancar(), girar() y frenar(), la clase Camion podrá utilizarlos directamente gracias a la herencia.
+
+Esto evita repetir código y facilita el mantenimiento del programa.
+
+### Sobrescritura de métodos
+
+La sobrescritura de métodos ocurre cuando una subclase define nuevamente un método que ya existe en su superclase.
+
+De esta manera, la subclase puede proporcionar una implementación diferente para ese método.
+
+Por ejemplo, tanto Coche como Camion pueden tener un método llamado establece_color(), pero cada clase puede mostrar un mensaje diferente al cambiar el color.
+
+### La instrucción parent
+
+PHP proporciona la palabra clave `parent` para acceder a métodos de la superclase desde una subclase.
+
+Su sintaxis es:
+
+```php
+parent::nombreMetodo();
+```
+
+Por ejemplo:
+
+```php
+public function arrancar() {
+    parent::arrancar();
+    echo "Camión arrancado";
+}
+```
+
+En este caso, `parent::arrancar()` ejecuta primero el método arrancar() de la superclase Coche. Después se ejecuta el código adicional definido en la subclase Camion.
+
+También puede utilizarse `parent::__construct()` para llamar al constructor de la superclase desde el constructor de la subclase.
+
+### Resumen
+
+- La herencia permite crear clases a partir de otras clases existentes.
+- La superclase es la clase de la que se hereda.
+- La subclase es la clase que hereda.
+- La palabra clave `extends` establece la relación de herencia.
+- La herencia permite reutilizar propiedades y métodos.
+- La sobrescritura permite redefinir métodos heredados.
+- La palabra clave `parent` permite acceder a métodos y al constructor de la superclase.
