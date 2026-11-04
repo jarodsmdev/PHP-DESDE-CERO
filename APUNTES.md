@@ -4676,3 +4676,174 @@ También puede utilizarse `parent::__construct()` para llamar al constructor de 
 - La herencia permite reutilizar propiedades y métodos.
 - La sobrescritura permite redefinir métodos heredados.
 - La palabra clave `parent` permite acceder a métodos y al constructor de la superclase.
+
+
+## 24.5 POO V: Modificadores de Acceso I
+
+### Modularización
+
+La modularización consiste en organizar el código de un programa dividiéndolo en partes más pequeñas e independientes, facilitando su organización, reutilización y mantenimiento.
+
+En PHP podemos escribir todo el código en un único archivo o distribuirlo en varios archivos, separando las clases y sus funcionalidades.
+
+Por ejemplo, podemos tener un archivo `index.php` que se encargue de ejecutar el programa y otros archivos que contengan las distintas clases.
+
+Una posible estructura sería:
+
+```text
+PROYECTO/
+│
+├── index.php
+│
+├── vehiculos.php
+│
+└── personas.php
+```
+
+De esta manera, cada archivo puede contener una o varias clases relacionadas con una determinada funcionalidad.
+
+Para utilizar las clases definidas en otro archivo podemos recurrir a instrucciones como `include()`.
+
+```php
+include("vehiculos.php");
+include("personas.php");
+```
+
+La modularización permite:
+
+- Organizar mejor el código.
+- Separar responsabilidades.
+- Reutilizar clases en diferentes archivos.
+- Facilitar el mantenimiento y la modificación del programa.
+
+### Encapsulación
+
+La encapsulación es uno de los principios fundamentales de la Programación Orientada a Objetos.
+
+Consiste en proteger y controlar el acceso a los datos y funcionalidades de una clase, evitando que puedan modificarse directamente desde cualquier parte del programa.
+
+Para conseguirlo, PHP dispone de modificadores de acceso que permiten establecer desde dónde se pueden utilizar las propiedades y los métodos de una clase.
+
+Más adelante veremos cómo acceder y modificar propiedades protegidas mediante métodos especiales llamados **getters y setters**.
+
+### Modificadores de acceso
+
+Los modificadores de acceso permiten controlar la visibilidad de las propiedades y los métodos de una clase.
+
+En PHP existen tres modificadores principales:
+
+#### 1. public
+
+El modificador `public` permite acceder a una propiedad o método desde cualquier parte del programa.
+
+Es decir, podemos utilizarlo desde dentro de la propia clase, desde una clase heredada o desde fuera de la clase mediante un objeto.
+
+Ejemplo:
+
+```php
+class Coche {
+
+    public $color = "Rojo";
+
+    public function arrancar() {
+        echo "El coche está arrancando";
+    }
+}
+
+$mazda = new Coche();
+
+// Acceso desde fuera de la clase
+echo $mazda->color;
+
+$mazda->arrancar();
+```
+
+En este caso, podemos acceder directamente a la propiedad `color` y ejecutar el método `arrancar()` porque ambos son públicos.
+
+#### 2. private
+
+El modificador `private` restringe el acceso a una propiedad o método únicamente a la clase en la que se ha declarado.
+
+No se puede acceder directamente desde fuera de la clase ni desde una clase heredada.
+
+Ejemplo:
+
+```php
+class Coche {
+
+    private $color = "Rojo";
+
+    public function mostrar_color() {
+        echo "El color del coche es: " . $this->color;
+    }
+}
+
+$mazda = new Coche();
+
+// Acceso permitido mediante un método público
+$mazda->mostrar_color();
+
+// Esto produciría un error:
+// echo $mazda->color;
+```
+
+En este ejemplo, la propiedad `color` es privada. Por eso, no podemos acceder directamente a ella desde fuera de la clase.
+
+Sin embargo, el método `mostrar_color()` sí puede acceder a ella porque pertenece a la misma clase.
+
+#### 3. protected
+
+El modificador `protected` permite acceder a una propiedad o método desde la propia clase y desde las clases que heredan de ella.
+
+No permite el acceso directo desde fuera de esas clases mediante un objeto.
+
+Ejemplo:
+
+```php
+class Coche {
+
+    protected $color = "Rojo";
+
+    public function mostrar_color() {
+        echo "El color del coche es: " . $this->color;
+    }
+}
+
+class Camion extends Coche {
+
+    public function mostrar_color_camion() {
+        echo "El color del camión es: " . $this->color;
+    }
+}
+
+$pegaso = new Camion();
+
+// Acceso permitido mediante un método heredado
+$pegaso->mostrar_color();
+
+// Acceso permitido desde la subclase
+$pegaso->mostrar_color_camion();
+
+// Esto produciría un error:
+// echo $pegaso->color;
+```
+
+En este caso, la propiedad `color` está protegida. La clase Camion puede acceder a ella porque hereda de Coche, pero no podemos acceder directamente a dicha propiedad desde fuera de las clases.
+
+### Comparación de los modificadores de acceso
+
+| Modificador | Dentro de la propia clase | Desde una clase heredada | Desde fuera de la clase |
+|---|---|---|---|
+| `public` | Sí | Sí | Sí |
+| `protected` | Sí | Sí | No |
+| `private` | Sí | No | No |
+
+### Resumen
+
+- La modularización permite organizar el código en diferentes archivos y separar las clases según sus responsabilidades.
+- La encapsulación permite proteger los datos y controlar cómo se accede a ellos.
+- `public` permite acceder desde cualquier parte del programa.
+- `private` permite acceder únicamente desde la clase donde se declara.
+- `protected` permite acceder desde la propia clase y desde las clases heredadas.
+- Los modificadores de acceso pueden aplicarse tanto a propiedades como a métodos.
+- Más adelante utilizaremos getters y setters para consultar y modificar propiedades encapsuladas.
