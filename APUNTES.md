@@ -4847,3 +4847,119 @@ En este caso, la propiedad `color` está protegida. La clase Camion puede accede
 - `protected` permite acceder desde la propia clase y desde las clases heredadas.
 - Los modificadores de acceso pueden aplicarse tanto a propiedades como a métodos.
 - Más adelante utilizaremos getters y setters para consultar y modificar propiedades encapsuladas.
+
+## 24.6 POO VI: Modificadores de Acceso II
+
+### Getters y Setters
+
+Los getters y setters son métodos que permiten consultar y modificar las propiedades de un objeto de forma controlada.
+
+Se utilizan especialmente cuando trabajamos con propiedades declaradas como `private` o `protected`, ya que estas no pueden consultarse o modificarse directamente desde cualquier parte del programa.
+
+Normalmente, los getters y setters se declaran como métodos `public`, permitiendo acceder a las propiedades desde fuera de la clase sin exponerlas directamente.
+
+### Getters
+
+Un getter es un método que permite obtener o consultar el valor de una propiedad de un objeto.
+
+Generalmente utiliza la instrucción `return` para devolver el valor solicitado.
+
+Ejemplo:
+
+```php id="u8j5xv"
+class Coche {
+
+    private int $ruedas = 4;
+
+    public function get_ruedas() {
+        return $this->ruedas;
+    }
+}
+```
+
+Para consultar el valor de la propiedad ruedas desde fuera de la clase:
+
+```php id="0j4g1n"
+$coche1 = new Coche();
+
+echo $coche1->get_ruedas();
+```
+
+El resultado será:
+
+```text id="1v8t9w"
+4
+```
+
+En este ejemplo, no accedemos directamente a la propiedad ruedas, sino que utilizamos el método público `get_ruedas()` para obtener su valor.
+
+### Setters
+
+Un setter es un método que permite modificar el valor de una propiedad de un objeto.
+
+Generalmente recibe un parámetro con el nuevo valor que queremos asignar.
+
+Ejemplo:
+
+```php id="8z1x9q"
+class Coche {
+
+    private int $ruedas = 4;
+
+    public function set_ruedas(int $ruedas) {
+        $this->ruedas = $ruedas;
+    }
+
+    public function get_ruedas() {
+        return $this->ruedas;
+    }
+}
+```
+
+Para modificar el valor de la propiedad ruedas:
+
+```php id="6v7p2k"
+$coche1 = new Coche();
+
+$coche1->set_ruedas(6);
+
+echo $coche1->get_ruedas();
+```
+
+El resultado será:
+
+```text id="9m2r5w"
+6
+```
+
+En este ejemplo, el método `set_ruedas()` recibe el nuevo valor y lo asigna a la propiedad mediante `$this`.
+
+Después utilizamos `get_ruedas()` para comprobar el valor actualizado.
+
+### Getters y Setters con herencia
+
+Los getters y setters también pueden utilizarse en clases que heredan de otras clases.
+
+Por ejemplo, si la clase `Coche` tiene una propiedad protegida llamada `ruedas` y un método público llamado `get_ruedas()`, la clase `Camion` podrá utilizar este método gracias a la herencia.
+
+Sin embargo, si la propiedad `ruedas` estuviera declarada como `private`, la clase `Camion` no podría acceder directamente a ella, ya que las propiedades privadas sólo son accesibles desde la propia clase en la que fueron declaradas.
+
+Esto permite consultar propiedades heredadas sin necesidad de acceder directamente a ellas.
+
+### Diferencia entre Getters y Setters
+
+| Método | Finalidad |
+|---|---|
+| Getter | Obtener o consultar el valor de una propiedad. |
+| Setter | Modificar el valor de una propiedad. |
+
+### Resumen
+
+- Los getters permiten consultar propiedades de un objeto.
+- Los setters permiten modificar propiedades de un objeto.
+- Generalmente se declaran como métodos públicos.
+- Permiten acceder de forma controlada a propiedades privadas o protegidas.
+- También pueden utilizarse con propiedades heredadas.
+- Los getters suelen utilizar `return` para devolver un valor.
+- Los setters suelen recibir parámetros para establecer nuevos valores.
+
