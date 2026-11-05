@@ -4964,7 +4964,7 @@ Esto permite consultar propiedades heredadas sin necesidad de acceder directamen
 - Los setters suelen recibir parámetros para establecer nuevos valores.
 
 
-## 24.7 POO VII: Variables y métodos estáticos
+## 24.7 POO VII: Variables y métodos estáticos I
 
 En programación orientada a objetos, normalmente cada objeto tiene sus propias propiedades, cuyos valores pueden ser diferentes de los de otros objetos creados a partir de la misma clase.
 
@@ -4980,7 +4980,7 @@ Se declara utilizando `static`:
 
 ```php
 class Compra_vehiculo {
-    public static $bono = 4500;
+    public static int $bono = 4500;
 }
 ```
 
@@ -5022,7 +5022,7 @@ Por ejemplo:
 
 ```php
 class Compra_vehiculo {
-    public static $bono = 4500;
+    private static int $bono = 4500;
 
     public function precio_final() {
         return $this->precio_base - self::$bono;
