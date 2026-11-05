@@ -4963,3 +4963,92 @@ Esto permite consultar propiedades heredadas sin necesidad de acceder directamen
 - Los getters suelen utilizar `return` para devolver un valor.
 - Los setters suelen recibir parámetros para establecer nuevos valores.
 
+
+## 24.7 POO VII: Variables y métodos estáticos
+
+En programación orientada a objetos, normalmente cada objeto tiene sus propias propiedades, cuyos valores pueden ser diferentes de los de otros objetos creados a partir de la misma clase.
+
+Sin embargo, PHP permite declarar propiedades y métodos estáticos mediante la palabra reservada `static`.
+
+Los elementos estáticos pertenecen a la **clase**, no a cada objeto individual. Esto significa que una propiedad estática es compartida por todos los objetos de esa clase, en lugar de tener una copia independiente en cada uno.
+
+### Propiedades estáticas
+
+Una propiedad estática es una variable que pertenece a la clase y cuyo valor es compartido por todas sus instancias.
+
+Se declara utilizando `static`:
+
+```php
+class Compra_vehiculo {
+    public static $bono = 4500;
+}
+```
+
+Para acceder a una propiedad estática desde fuera de la clase, se utiliza el nombre de la clase seguido del operador `::`:
+
+```php
+Compra_vehiculo::$bono = 10000;
+```
+
+De esta manera, modificamos el valor de la propiedad estática de la clase `Compra_vehiculo`. El cambio será compartido por todos los objetos de esa clase.
+
+### Métodos estáticos
+
+Los métodos estáticos son funciones que pertenecen a la clase y no necesitan que creemos un objeto para poder utilizarlos.
+
+Se declaran utilizando la palabra reservada `static`:
+
+```php
+class Operaciones {
+    public static function sumar($numero1, $numero2) {
+        return $numero1 + $numero2;
+    }
+}
+```
+
+Para llamar a un método estático desde fuera de la clase, utilizamos también el operador `::`:
+
+```php
+echo Operaciones::sumar(5, 3);
+```
+
+El resultado será `8`.
+
+### Acceder a elementos estáticos desde la propia clase
+
+Cuando necesitamos acceder a una propiedad o método estático desde dentro de la misma clase, podemos utilizar `self::`.
+
+Por ejemplo:
+
+```php
+class Compra_vehiculo {
+    public static $bono = 4500;
+
+    public function precio_final() {
+        return $this->precio_base - self::$bono;
+    }
+}
+```
+
+En este caso, `self::$bono` hace referencia a la propiedad estática de la clase `Compra_vehiculo`.
+
+**Importante:** `$this` hace referencia al objeto actual y se utiliza para acceder a sus propiedades y métodos normales. En cambio, `self::` hace referencia a la propia clase y permite acceder a sus elementos estáticos.
+
+### Ejemplo práctico
+
+En nuestro ejemplo del concesionario, cada compra tiene su propio precio base, pero todas las compras comparten el mismo bono de descuento.
+
+Por eso, `precio_base` es una propiedad normal, mientras que `bono` es una propiedad estática.
+
+En el archivo `concesionario.php` tenemos la clase `Compra_vehiculo`. En `index.php` modificamos el bono y creamos dos compras diferentes.
+
+Aunque cada objeto tiene su propio precio base, ambos utilizan el mismo bono al calcular el precio final.
+
+### Resumen
+
+- **Propiedades normales:** cada objeto tiene su propio valor.
+- **Propiedades estáticas:** pertenecen a la clase y son compartidas por sus objetos.
+- **Métodos normales:** se llaman desde un objeto utilizando `->`.
+- **Métodos estáticos:** se llaman desde la clase utilizando `::`.
+- **`self::`:** permite acceder a elementos estáticos desde dentro de la propia clase.
+- **`$this`:** hace referencia al objeto actual.
