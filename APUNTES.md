@@ -5572,3 +5572,257 @@ El resultado será `Luis 21 Madrid`.
 - La desestructuración permite asignar los valores de un array a diferentes variables.
 - En arrays indexados, la asignación se realiza siguiendo el orden de los índices.
 - En arrays asociativos, podemos indicar las claves que queremos extraer.
+
+## 26. Conexión a BBDD MySQL
+
+Una base de datos es un sistema que permite almacenar, organizar y consultar información de manera estructurada.
+
+En PHP podemos conectarnos a diferentes sistemas gestores de bases de datos, como MySQL, para guardar, modificar, eliminar y recuperar información.
+
+En este apartado aprenderemos a conectar PHP con una base de datos MySQL utilizando **MySQLi**.
+
+### 1. ¿Qué es MySQLi?
+
+MySQLi (MySQL Improved) es una extensión de PHP que permite comunicarnos con bases de datos MySQL.
+
+A través de MySQLi podemos realizar diferentes operaciones:
+
+- Establecer conexiones con bases de datos MySQL.
+- Ejecutar consultas SQL.
+- Insertar, modificar y eliminar registros.
+- Recuperar información almacenada.
+- Gestionar errores durante las operaciones.
+
+MySQLi ofrece dos formas de trabajar: mediante programación orientada a objetos y mediante funciones procedimentales.
+
+En nuestro ejemplo utilizaremos principalmente la programación orientada a objetos para establecer la conexión y algunas funciones procedimentales para ejecutar las consultas y recuperar los resultados.
+
+### 2. Crear la base de datos y la tabla
+
+Antes de conectar PHP con MySQL, necesitamos disponer de una base de datos y una tabla donde almacenar la información.
+
+Para ello, podemos utilizar phpMyAdmin, que normalmente viene incluido en XAMPP.
+
+Accedemos a phpMyAdmin desde:
+
+`http://localhost/phpmyadmin`
+
+Una vez dentro, podemos abrir la pestaña SQL y ejecutar las siguientes instrucciones:
+
+```sql
+-- CREAR BASE DE DATOS
+CREATE DATABASE IF NOT EXISTS pruebas
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_general_ci;
+
+-- UTILIZAR LA BASE DE DATOS
+USE pruebas;
+
+-- CREAR TABLA
+CREATE TABLE IF NOT EXISTS DATOSPERSONALES (
+    NIF VARCHAR(15) PRIMARY KEY,
+    NOMBRE VARCHAR(100),
+    APELLIDO VARCHAR(100),
+    EDAD INT
+);
+
+-- INGRESAR DATOS
+INSERT INTO DATOSPERSONALES (NIF, NOMBRE, APELLIDO, EDAD)
+VALUES
+('50193568W', 'JUAN', 'PÉREZ', 25),
+('51972854W', 'MARÍA', 'GÓMEZ', 30),
+('51982457B', 'PEDRO', 'ROJAS', 27);
+```
+
+Con estas instrucciones hemos realizado las siguientes operaciones:
+
+- `CREATE DATABASE`: crea una base de datos llamada `pruebas`.
+- `IF NOT EXISTS`: evita intentar crearla si ya existe.
+- `CHARACTER SET utf8mb4`: establece la codificación de caracteres, permitiendo almacenar correctamente caracteres especiales y emojis.
+- `COLLATE utf8mb4_general_ci`: establece las reglas de comparación y ordenación de textos.
+- `USE`: indica qué base de datos queremos utilizar.
+- `CREATE TABLE`: crea una tabla llamada `DATOSPERSONALES`.
+- `PRIMARY KEY`: establece `NIF` como clave primaria, identificando de forma única cada registro.
+- `INSERT INTO`: introduce nuevos registros en la tabla.
+
+Una vez ejecutadas las instrucciones, tendremos una base de datos llamada `pruebas`, con una tabla que contiene información personal de ejemplo.
+
+### 3. Configurar los datos de conexión
+
+Para conectar PHP con MySQL necesitamos indicar los datos necesarios para establecer la conexión.
+
+Normalmente necesitaremos cuatro parámetros:
+
+```php
+$DB_HOST = "localhost";
+$DB_DATABASE = "pruebas";
+$DB_USERNAME = "root";
+$DB_PASSWORD = "";
+```
+
+Cada variable representa lo siguiente:
+
+- `$DB_HOST`: dirección del servidor donde se encuentra MySQL. En nuestro entorno local utilizamos `localhost`.
+- `$DB_DATABASE`: nombre de la base de datos a la que queremos conectarnos.
+- `$DB_USERNAME`: nombre del usuario de MySQL.
+- `$DB_PASSWORD`: contraseña del usuario de MySQL.
+
+En una instalación habitual de XAMPP, el usuario suele ser `root` y la contraseña puede estar vacía, aunque esto depende de la configuración de MySQL.
+
+### 4. Establecer la conexión con MySQL
+
+Para crear una conexión utilizando MySQLi y programación orientada a objetos, utilizamos la clase `mysqli` y su constructor `new mysqli()`.
+
+Su sintaxis es:
+
+```php
+$conexion = new mysqli(
+    $DB_HOST,
+    $DB_USERNAME,
+    $DB_PASSWORD,
+    $DB_DATABASE
+);
+```
+
+El constructor recibe los datos de conexión y devuelve un objeto que representa la conexión con el servidor MySQL.
+
+En nuestro caso, la variable `$conexion` almacenará ese objeto, mediante el cual podremos comunicarnos con la base de datos.
+
+### 5. Comprobar si la conexión se ha establecido correctamente
+
+Después de intentar establecer la conexión, es conveniente comprobar si se ha producido algún error.
+
+Para ello, podemos consultar la propiedad `connect_error` del objeto de conexión:
+
+```php
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
+}
+```
+
+- `connect_error`: contiene el mensaje de error si la conexión ha fallado.
+- `die()`: muestra un mensaje y detiene la ejecución del script.
+
+Si no se produce ningún error, podemos continuar con el programa:
+
+```php
+echo "¡Conexión establecida!";
+```
+
+De esta manera sabemos que PHP ha conseguido conectarse con el servidor MySQL.
+
+### 6. Establecer la codificación de caracteres
+
+Una vez establecida la conexión, es recomendable indicar la codificación de caracteres que vamos a utilizar.
+
+Para ello, utilizamos el método `set_charset()`:
+
+```php
+$conexion->set_charset("utf8mb4");
+```
+
+Esto permite que los datos enviados y recibidos entre PHP y MySQL utilicen correctamente caracteres especiales, como tildes, eñes y otros símbolos.
+
+Es importante que la codificación de la conexión sea compatible con la utilizada en la base de datos.
+
+### 7. Realizar una consulta SQL
+
+Una vez conectados, podemos ejecutar consultas SQL para recuperar información de la base de datos.
+
+Por ejemplo:
+
+```php
+$consulta = "SELECT * FROM DATOSPERSONALES";
+```
+
+La instrucción `SELECT` permite recuperar información de una tabla.
+
+En este caso:
+
+- `SELECT`: indica que queremos consultar datos.
+- `*`: significa que queremos obtener todas las columnas.
+- `FROM DATOSPERSONALES`: indica la tabla de la que queremos recuperar la información.
+
+Para ejecutar la consulta podemos utilizar `mysqli_query()`:
+
+```php
+$resultado = mysqli_query($conexion, $consulta);
+```
+
+Esta función recibe dos argumentos:
+
+- La conexión con la base de datos.
+- La consulta SQL que queremos ejecutar.
+
+Si la consulta se ejecuta correctamente, devuelve un resultado que podremos utilizar para recuperar los registros. Si se produce un error, devuelve `false`.
+
+### 8. Recuperar y mostrar los registros
+
+Una vez ejecutada la consulta, podemos recorrer los resultados para obtener los registros de la tabla.
+
+Para ello, utilizamos la función `mysqli_fetch_assoc()`:
+
+```php
+while ($fila = mysqli_fetch_assoc($resultado)) {
+    echo "<p>NIF: {$fila['NIF']}</p>";
+    echo "<p>NOMBRE: {$fila['NOMBRE']}</p>";
+    echo "<p>APELLIDO: {$fila['APELLIDO']}</p>";
+    echo "<p>EDAD: {$fila['EDAD']}</p>";
+}
+```
+
+Esta función recupera una fila del resultado y la devuelve como un array asociativo. (Existen otras formas de recuperar resultados)
+
+Las claves del array corresponden a los nombres de las columnas de la tabla, mientras que los valores contienen los datos almacenados en cada columna.
+
+Cada vez que se ejecuta `mysqli_fetch_assoc()`, se obtiene el siguiente registro.
+
+Cuando ya no quedan registros por recuperar, la función devuelve `null` y el bucle `while` termina.
+
+Por ejemplo, si nuestra tabla contiene tres personas, el bucle se ejecutará tres veces, mostrando la información de cada una.
+
+### 9. Gestionar errores en las consultas
+
+También debemos comprobar si la consulta SQL se ha ejecutado correctamente.
+
+Podemos hacerlo mediante una condición:
+
+```php
+if ($resultado) {
+    while ($fila = mysqli_fetch_assoc($resultado)) {
+        echo "<p>{$fila['NOMBRE']}</p>";
+    }
+} else {
+    echo "Error en la consulta: " . mysqli_error($conexion);
+}
+```
+
+La función `mysqli_error()` devuelve el mensaje del último error producido en la conexión.
+
+De esta forma podemos identificar problemas relacionados con las consultas SQL.
+
+### 10. Cerrar la conexión
+
+Cuando terminamos de trabajar con la base de datos, podemos cerrar la conexión utilizando `mysqli_close()`:
+
+```php
+mysqli_close($conexion);
+```
+
+Esta función cierra la conexión con el servidor MySQL y libera los recursos asociados.
+
+Es una buena práctica cerrar las conexiones cuando ya no las necesitamos.
+
+### Resumen
+
+- **MySQLi:** extensión de PHP que permite trabajar con bases de datos MySQL.
+- **`new mysqli()`:** crea una conexión con el servidor MySQL.
+- **`connect_error`:** permite comprobar si se ha producido un error al conectar.
+- **`set_charset()`:** establece la codificación de caracteres de la conexión.
+- **`mysqli_query()`:** ejecuta una consulta SQL.
+- **`mysqli_fetch_assoc()`:** recupera una fila como array asociativo.
+- **`mysqli_fetch_row()`:** recupera una fila como array indexado. 
+- **`mysqli_error()`:** devuelve información sobre el último error de MySQL.
+- **`mysqli_close()`:** cierra la conexión con la base de datos.
+
+**Importante:** en este ejemplo utilizamos una consulta `SELECT` para recuperar información. Cuando más adelante trabajemos con formularios y datos introducidos por usuarios, aprenderemos a utilizar consultas preparadas (*prepared statements*) para evitar vulnerabilidades como la inyección SQL.
