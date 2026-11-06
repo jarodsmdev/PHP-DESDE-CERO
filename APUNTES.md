@@ -5054,7 +5054,7 @@ Aunque cada objeto tiene su propio precio base, ambos utilizan el mismo bono al 
 - **`$this`:** hace referencia al objeto actual.
 
 
-## 25.1 Arrays
+## 25.1 Arrays I
 
 Los **arrays**, también conocidos como arreglos o vectores, son estructuras que permiten almacenar varios valores dentro de una misma variable.
 
@@ -5196,3 +5196,195 @@ Por otro lado, `var_dump()` proporciona información más detallada, incluyendo 
 - Podemos declarar arrays utilizando `array()` o la sintaxis corta `[]`.
 - Para acceder a un elemento utilizamos su índice o clave entre corchetes.
 - Podemos visualizar su contenido utilizando `print_r()` o `var_dump()`.
+
+## 25.2 Arrays II
+
+En PHP disponemos de diferentes funciones y estructuras que nos permiten trabajar con arrays. Podemos comprobar si una variable es un array, recorrer sus elementos, añadir nuevos valores y ordenarlos.
+
+### 1. Comprobar si una variable es un array
+
+Para comprobar si una variable contiene un array, podemos utilizar la función `is_array()`.
+
+Esta función devuelve un valor booleano:
+- `true`: si la variable es un array.
+- `false`: si la variable no es un array.
+
+Ejemplo:
+
+```php
+$datos = array(
+    "Nombre" => "Juan",
+    "Apellido" => "Gómez",
+    "Edad" => 21
+);
+
+if (is_array($datos)) {
+    echo "Es un array";
+} else {
+    echo "No es un array";
+}
+```
+
+También podemos utilizar `is_array()` directamente dentro de una condición para realizar diferentes acciones dependiendo del tipo de dato.
+
+### 2. Recorrer un array
+
+Recorrer un array significa acceder a sus elementos uno por uno. Esto resulta especialmente útil cuando tenemos muchos valores y queremos mostrarlos o realizar alguna operación con ellos.
+
+En PHP podemos recorrer arrays utilizando estructuras como `foreach` y `for`.
+
+**Utilizando foreach:**
+
+La estructura `foreach` está diseñada para recorrer arrays y permite acceder a cada uno de sus elementos.
+
+Su sintaxis es:
+
+```php
+foreach ($array as $valor) {
+    // Instrucciones
+}
+```
+
+Si el array es asociativo, también podemos obtener la clave y el valor de cada elemento:
+
+```php
+foreach ($array as $clave => $valor) {
+    // Instrucciones
+}
+```
+
+Por ejemplo:
+
+```php
+$datos = array(
+    "Nombre" => "Juan",
+    "Apellido" => "Gómez",
+    "Edad" => 21
+);
+
+foreach ($datos as $clave => $valor) {
+    echo "$clave: $valor";
+}
+```
+
+**Utilizando for:**
+
+También podemos recorrer un array indexado mediante un bucle `for`.
+
+Para ello, podemos utilizar la función `count()`, que devuelve el número de elementos que contiene un array.
+
+Ejemplo:
+
+```php
+$semana = ["Lunes", "Martes", "Miércoles", "Jueves"];
+
+for ($i = 0; $i < count($semana); $i++) {
+    echo $semana[$i];
+}
+```
+
+En este caso, el bucle comienza en el índice `0` y se repite mientras el índice sea menor que el número de elementos del array.
+
+### 3. Añadir elementos a un array
+
+Podemos añadir nuevos elementos a un array de diferentes maneras.
+
+**En un array indexado:**
+
+Podemos utilizar corchetes vacíos `[]` para agregar un nuevo elemento al final del array. PHP le asignará automáticamente el siguiente índice disponible.
+
+```php
+$semana = ["Lunes", "Martes", "Miércoles"];
+
+$semana[] = "Jueves";
+$semana[] = "Viernes";
+```
+
+También podemos indicar manualmente el índice en el que queremos almacenar un valor:
+
+```php
+$semana[4] = "Viernes";
+```
+
+**En un array asociativo:**
+
+Para añadir un elemento, debemos indicar una nueva clave y asignarle su valor:
+
+```php
+$datos = [
+    "Nombre" => "Juan",
+    "Apellido" => "Gómez"
+];
+
+$datos["País"] = "Chile";
+```
+
+De esta manera, añadimos un nuevo elemento identificado por la clave `"País"`.
+
+### 4. Ordenar un array
+
+PHP dispone de diferentes funciones para ordenar los elementos de un array.
+
+**sort():**
+
+Ordena los valores de un array indexado de menor a mayor o en orden alfabético. Los índices numéricos se reorganizan.
+
+```php
+$semana = ["Jueves", "Lunes", "Viernes", "Martes"];
+
+sort($semana);
+```
+
+El resultado será:
+
+```text
+Array
+(
+    [0] => Jueves
+    [1] => Lunes
+    [2] => Martes
+    [3] => Viernes
+)
+```
+
+**rsort():**
+
+Ordena los valores de mayor a menor o en orden alfabético inverso. También reorganiza los índices numéricos.
+
+```php
+rsort($semana);
+```
+
+**Ordenar arrays asociativos:**
+
+Cuando trabajamos con arrays asociativos, debemos tener en cuenta si queremos conservar sus claves:
+
+- `asort()`: ordena los valores de menor a mayor y conserva las claves.
+- `arsort()`: ordena los valores de mayor a menor y conserva las claves.
+- `ksort()`: ordena las claves en orden ascendente.
+- `krsort()`: ordena las claves en orden descendente.
+
+Por ejemplo:
+
+```php
+$datos = [
+    "Carlos" => 25,
+    "Ana" => 19,
+    "Pedro" => 30
+];
+
+asort($datos);
+```
+
+En este caso, los elementos se ordenan según sus valores numéricos, pero se conservan sus claves originales.
+
+### Resumen
+
+- `is_array()`: comprueba si una variable es un array.
+- `foreach`: permite recorrer los elementos de un array.
+- `for`: permite recorrer arrays indexados mediante sus índices.
+- `count()`: devuelve el número de elementos de un array.
+- `[]`: permite añadir elementos al final de un array indexado.
+- En arrays asociativos podemos añadir elementos indicando una nueva clave.
+- `sort()` y `rsort()`: ordenan los valores de arrays y reorganizan sus índices.
+- `asort()`, `arsort()`, `ksort()` y `krsort()`: permiten ordenar arrays asociativos conservando sus claves.
