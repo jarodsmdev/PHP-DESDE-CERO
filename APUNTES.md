@@ -5388,3 +5388,187 @@ En este caso, los elementos se ordenan según sus valores numéricos, pero se co
 - En arrays asociativos podemos añadir elementos indicando una nueva clave.
 - `sort()` y `rsort()`: ordenan los valores de arrays y reorganizan sus índices.
 - `asort()`, `arsort()`, `ksort()` y `krsort()`: permiten ordenar arrays asociativos conservando sus claves.
+
+
+## 25.3 Arrays III
+
+Hasta ahora hemos trabajado con arrays que almacenan diferentes valores dentro de una misma variable. Sin embargo, PHP también permite almacenar arrays dentro de otros arrays. Esto nos permite crear estructuras más complejas y organizar grandes cantidades de información.
+
+### 1. Arrays multidimensionales
+
+Un array multidimensional es un array que contiene uno o varios arrays como elementos.
+
+Se utiliza para organizar información relacionada en diferentes niveles. Por ejemplo, podemos almacenar categorías de productos, listas de alumnos con sus notas, información de empleados o datos agrupados por características.
+
+La sintaxis consiste en declarar un array cuyos elementos sean otros arrays:
+
+```php
+$alimentos = [
+    "fruta" => [
+        "tropical" => "Kiwi",
+        "cítrico" => "Mandarina",
+        "otros" => "Manzana"
+    ],
+
+    "leche" => [
+        "animal" => "Vaca",
+        "vegetal" => "Coco"
+    ],
+
+    "carne" => [
+        "vacuno" => "Lomo",
+        "porcino" => "Pata"
+    ]
+];
+```
+
+En este ejemplo tenemos un array asociativo llamado `$alimentos`, cuyos elementos contienen otros arrays asociativos.
+
+Podemos observar que existen diferentes niveles:
+- Primer nivel: las categorías `fruta`, `leche` y `carne`.
+- Segundo nivel: las claves y valores almacenados dentro de cada categoría.
+
+Los arrays multidimensionales pueden tener dos o más niveles, dependiendo de la cantidad de arrays que contengan.
+
+### 2. Acceder a los valores de un array multidimensional
+
+Para acceder a un elemento de un array multidimensional, debemos indicar sus claves o índices entre corchetes, siguiendo el orden de los niveles.
+
+Por ejemplo:
+
+```php
+echo $alimentos["carne"]["vacuno"];
+```
+
+El resultado será `Lomo`.
+
+Primero accedemos al elemento identificado por la clave `"carne"` y después al elemento `"vacuno"` que se encuentra dentro de ese array.
+
+También podemos acceder a otros elementos:
+
+```php
+echo $alimentos["fruta"]["tropical"]; // Kiwi
+
+echo $alimentos["leche"]["vegetal"]; // Coco
+```
+
+### 3. Recorrer un array multidimensional
+
+Para recorrer un array multidimensional podemos utilizar estructuras como `foreach` dentro de otras estructuras `foreach`.
+
+Esto se conoce como **bucles anidados**.
+
+El primer `foreach` recorre los elementos del array principal y el segundo recorre los elementos del array que contiene cada uno de ellos.
+
+Ejemplo:
+
+```php
+foreach ($alimentos as $clave_alim => $alim) {
+
+    echo "<h3>{$clave_alim}</h3>";
+
+    foreach ($alim as $clave => $valor) {
+        echo "<p>{$clave}: {$valor}</p>";
+    }
+}
+```
+
+En este caso:
+- El primer `foreach` recorre las categorías principales.
+- El segundo `foreach` recorre los elementos que pertenecen a cada categoría.
+- `$clave_alim` contiene el nombre de la categoría.
+- `$clave` contiene la clave del elemento interno.
+- `$valor` contiene el valor almacenado.
+
+También podemos utilizar `print_r()` o `var_dump()` para visualizar el contenido completo de un array multidimensional.
+
+```php
+echo "<pre>";
+print_r($alimentos);
+echo "</pre>";
+```
+
+La función `var_dump()` proporciona información más detallada, incluyendo los tipos de datos y la estructura de los elementos.
+
+### 4. Desestructuración de arrays
+
+La desestructuración permite extraer los valores de un array y asignarlos directamente a diferentes variables.
+
+En PHP podemos realizar esta operación utilizando corchetes `[]` o la construcción `list()`.
+
+#### 4.1. Desestructuración de arrays indexados
+
+Cuando trabajamos con un array indexado, podemos asignar sus valores a diferentes variables siguiendo el orden de sus posiciones.
+
+Ejemplo:
+
+```php
+$datos = [1, 2, 3];
+
+[$a, $b, $c] = $datos;
+```
+
+En este caso:
+- `$a` recibe el valor del índice `0`.
+- `$b` recibe el valor del índice `1`.
+- `$c` recibe el valor del índice `2`.
+
+Podemos comprobarlo mostrando las variables:
+
+```php
+echo $a; // 1
+echo $b; // 2
+echo $c; // 3
+```
+
+También podemos utilizar `list()`:
+
+```php
+list($a, $b, $c) = $datos;
+```
+
+#### 4.2. Desestructuración de arrays asociativos
+
+En los arrays asociativos podemos extraer los valores indicando las claves correspondientes.
+
+Ejemplo:
+
+```php
+$persona = [
+    "nombre" => "Luis",
+    "edad" => 21,
+    "ciudad" => "Madrid"
+];
+
+[
+    "nombre" => $elNombre,
+    "edad" => $laEdad,
+    "ciudad" => $laCiudad
+] = $persona;
+```
+
+En este caso:
+- `$elNombre` recibe el valor de la clave `"nombre"`.
+- `$laEdad` recibe el valor de la clave `"edad"`.
+- `$laCiudad` recibe el valor de la clave `"ciudad"`.
+
+Podemos mostrar las variables:
+
+```php
+echo "$elNombre $laEdad $laCiudad";
+```
+
+El resultado será `Luis 21 Madrid`.
+
+**Importante:** en la desestructuración asociativa debemos indicar las claves que queremos extraer y las variables en las que almacenaremos sus valores.
+
+### Resumen
+
+- Los arrays multidimensionales son arrays que contienen otros arrays.
+- Permiten organizar información en diferentes niveles.
+- Para acceder a sus elementos utilizamos varios índices o claves entre corchetes.
+- Podemos recorrerlos mediante bucles anidados, por ejemplo, utilizando `foreach` dentro de otro `foreach`.
+- `print_r()` y `var_dump()` permiten visualizar su contenido.
+- La desestructuración permite asignar los valores de un array a diferentes variables.
+- En arrays indexados, la asignación se realiza siguiendo el orden de los índices.
+- En arrays asociativos, podemos indicar las claves que queremos extraer.
