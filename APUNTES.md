@@ -5052,3 +5052,147 @@ Aunque cada objeto tiene su propio precio base, ambos utilizan el mismo bono al 
 - **Métodos estáticos:** se llaman desde la clase utilizando `::`.
 - **`self::`:** permite acceder a elementos estáticos desde dentro de la propia clase.
 - **`$this`:** hace referencia al objeto actual.
+
+
+## 25.1 Arrays
+
+Los **arrays**, también conocidos como arreglos o vectores, son estructuras que permiten almacenar varios valores dentro de una misma variable.
+
+A diferencia de las variables normales, que generalmente almacenan un único valor, un array puede contener múltiples elementos. Estos elementos pueden ser números, cadenas de texto, valores booleanos e incluso otros arrays.
+
+Los arrays son muy útiles cuando necesitamos almacenar y organizar conjuntos de datos relacionados, como una lista de nombres, los días de la semana, productos o información de una persona.
+
+### Tipos de arrays en PHP
+
+En PHP podemos trabajar principalmente con dos formas de organizar los elementos de un array:
+
+- **Arrays indexados:** sus elementos se identifican mediante índices numéricos.
+- **Arrays asociativos:** sus elementos se identifican mediante claves con nombre, generalmente cadenas de texto.
+
+### 1. Arrays indexados
+
+Son aquellos cuyos elementos se identifican mediante índices numéricos.
+
+En PHP, los índices de un array comienzan normalmente en `0`, por lo que el primer elemento tendrá el índice `0`, el segundo el índice `1`, y así sucesivamente.
+
+Existen diferentes formas de declarar un array indexado.
+
+**Declaración A:**
+
+Podemos crear un array asignando valores directamente a sus posiciones vacías. PHP irá asignando automáticamente los índices numéricos.
+
+```php
+$semanaA[] = "Lunes";
+$semanaA[] = "Martes";
+$semanaA[] = "Miércoles";
+```
+
+**Declaración B:**
+
+También podemos indicar manualmente el índice de cada elemento:
+
+```php
+$semanaB[0] = "Lunes";
+$semanaB[1] = "Martes";
+$semanaB[2] = "Miércoles";
+```
+
+**Declaración C:**
+
+Otra forma es utilizar la función `array()` para declarar todos los elementos de una sola vez:
+
+```php
+$semanaC = array("Lunes", "Martes", "Miércoles");
+```
+
+También podemos utilizar la sintaxis corta con corchetes:
+
+```php
+$semanaC = ["Lunes", "Martes", "Miércoles"];
+```
+
+Para acceder a un elemento, escribimos el nombre del array seguido de su índice entre corchetes:
+
+```php
+echo $semanaA[1];
+```
+
+El resultado será `Martes`, ya que corresponde al elemento situado en el índice `1`.
+
+### 2. Arrays asociativos
+
+Son aquellos cuyos elementos se identifican mediante claves, en lugar de utilizar únicamente índices numéricos.
+
+Cada elemento está formado por una clave y un valor. Esto permite organizar la información utilizando nombres que describen los datos almacenados.
+
+Por ejemplo:
+
+```php
+$datos = array(
+    "Nombre" => "Juan",
+    "Apellido" => "Gómez",
+    "Edad" => 21
+);
+```
+
+En este caso:
+- `"Nombre"`, `"Apellido"` y `"Edad"` son las claves.
+- `"Juan"`, `"Gómez"` y `21` son los valores.
+
+Para acceder a un elemento, utilizamos su clave entre corchetes:
+
+```php
+echo $datos["Nombre"];
+echo $datos["Apellido"];
+echo $datos["Edad"];
+```
+
+También podemos utilizar la sintaxis corta:
+
+```php
+$datos = [
+    "Nombre" => "Juan",
+    "Apellido" => "Gómez",
+    "Edad" => 21
+];
+```
+
+### 3. Visualizar los valores de un array
+
+Podemos acceder individualmente a cada elemento de un array utilizando su índice o su clave, según corresponda.
+
+Sin embargo, cuando queremos visualizar todos los elementos almacenados, podemos utilizar las funciones `print_r()` o `var_dump()`.
+
+Por ejemplo:
+
+```php
+$semana = ["Lunes", "Martes", "Miércoles"];
+
+echo "<pre>";
+print_r($semana);
+echo "</pre>";
+```
+
+El resultado será:
+
+```text
+Array
+(
+    [0] => Lunes
+    [1] => Martes
+    [2] => Miércoles
+)
+```
+
+La función `print_r()` muestra los elementos y sus respectivos índices o claves de una forma legible.
+
+Por otro lado, `var_dump()` proporciona información más detallada, incluyendo el tipo de dato y el tamaño de cada valor.
+
+### Resumen
+
+- Los arrays permiten almacenar varios valores dentro de una misma variable.
+- Los arrays indexados utilizan índices numéricos para identificar sus elementos.
+- Los arrays asociativos utilizan claves para identificar sus elementos.
+- Podemos declarar arrays utilizando `array()` o la sintaxis corta `[]`.
+- Para acceder a un elemento utilizamos su índice o clave entre corchetes.
+- Podemos visualizar su contenido utilizando `print_r()` o `var_dump()`.
