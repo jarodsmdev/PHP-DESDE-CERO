@@ -5826,3 +5826,549 @@ Es una buena práctica cerrar las conexiones cuando ya no las necesitamos.
 - **`mysqli_close()`:** cierra la conexión con la base de datos.
 
 **Importante:** en este ejemplo utilizamos una consulta `SELECT` para recuperar información. Cuando más adelante trabajemos con formularios y datos introducidos por usuarios, aprenderemos a utilizar consultas preparadas (*prepared statements*) para evitar vulnerabilidades como la inyección SQL.
+
+## 27. Importación de tablas y muestra de datos en formato de tabla
+
+Hasta ahora hemos trabajado con variables, arrays, funciones y programación orientada a objetos. En este apartado comenzaremos a trabajar con bases de datos.
+
+Una **base de datos** es un sistema que permite almacenar y organizar información para poder consultarla, modificarla y administrarla.
+
+En nuestro caso utilizaremos **MySQL**, un sistema de gestión de bases de datos relacional, y **phpMyAdmin**, una herramienta que permite administrar bases de datos mediante una interfaz gráfica desde el navegador.
+
+### 1. Datos de conexión a la base de datos
+
+Para que PHP pueda trabajar con una base de datos MySQL, primero necesitamos conocer sus datos de conexión.
+
+En nuestro entorno local, utilizando XAMPP, los datos habituales son:
+
+- **Servidor:** localhost
+- **Base de datos:** pruebas
+- **Usuario:** root
+- **Contraseña:** vacía, si no hemos configurado una.
+
+Estos datos permiten establecer una conexión entre nuestro programa PHP y el servidor MySQL.
+
+Es recomendable guardar los datos de conexión en un archivo independiente, por ejemplo `config.php`, para poder reutilizarlos desde diferentes archivos PHP.
+
+El contenido de este archivo será:
+
+```php
+<?php
+$DB_HOST = "localhost";
+$DB_USERNAME = "root";
+$DB_PASSWORD = "";
+$DB_DATABASE = "pruebas";
+?>
+```
+
+De esta manera, cuando necesitemos conectarnos a la base de datos, solamente tendremos que incluir este archivo mediante `require()`.
+
+### 2. Importar una tabla a MySQL
+
+Para trabajar con datos necesitamos disponer de una base de datos y de una tabla que almacene los registros.
+
+En nuestro ejemplo utilizaremos una tabla llamada `ARTICULOS`, que contendrá información de diferentes productos.
+
+La tabla tendrá los siguientes campos:
+
+- `CODIGOARTICULO`: código identificador del artículo.
+- `SECCION`: sección a la que pertenece.
+- `NOMBREARTICULO`: nombre o descripción del artículo.
+- `PRECIO`: precio del producto.
+- `FECHA`: fecha correspondiente al registro.
+- `IMPORTADO`: indica si el artículo es importado.
+- `PAISORIGEN`: país de origen del artículo.
+- `FOTO`: nombre del archivo de imagen del artículo.
+
+Se proporciona un archivo `articulos.sql`, que contiene las instrucciones necesarias para crear la tabla `ARTICULOS` e insertar 45 registros de ejemplo.
+
+Para crear la tabla y añadir los registros utilizaremos instrucciones SQL.
+
+**Importar la tabla mediante phpMyAdmin:**
+
+1. Iniciamos Apache y MySQL desde el panel de control de XAMPP.
+2. Abrimos el navegador y accedemos a `http://localhost/phpmyadmin/`.
+3. Creamos una base de datos llamada `pruebas`, si todavía no existe.
+4. Seleccionamos la base de datos `pruebas`.
+5. Accedemos a la pestaña **Importar**.
+6. En el apartado de archivo a importar, pulsamos **Examinar**.
+7. Seleccionamos nuestro archivo `articulos.sql`.
+8. Pulsamos el botón **Importar** o **Continuar**, según la versión de phpMyAdmin.
+
+Si la importación se realiza correctamente, aparecerá la tabla `ARTICULOS` con los registros que hemos incluido en el archivo SQL.
+
+**Importante:** el archivo SQL debe contener las instrucciones para crear la tabla y añadir los registros. Si la tabla ya existe y volvemos a ejecutar la instrucción `CREATE TABLE`, MySQL puede devolver un error indicando que la tabla ya existe.
+
+### 3. Conectar PHP con MySQL
+
+Una vez creada la base de datos y la tabla, podemos establecer una conexión desde PHP utilizando la extensión MySQLi.
+
+Para ello utilizamos la función `mysqli_connect()`, que recibe los datos necesarios para conectarse al servidor:
+
+```php
+$conexion = mysqli_connect(
+    $DB_HOST,
+    $DB_USERNAME,
+    $DB_PASSWORD,
+    $DB_DATABASE
+);
+```
+
+También podemos comprobar si se ha producido algún error durante la conexión:
+
+```php
+if (mysqli_connect_errno()) {
+    echo "Fallo al conectar con la base de datos";
+    exit();
+}
+```
+
+La instrucción `exit()` detiene la ejecución del programa cuando no se puede establecer la conexión.
+
+Para trabajar correctamente con caracteres especiales y tildes, podemos configurar la conexión utilizando:
+
+```php
+$conexion->set_charset("utf8mb4");
+```
+
+De esta manera, evitamos problemas al trabajar con caracteres propios del español, como las tildes y la letra ñ.
+
+### 4. Realizar consultas a la base de datos
+
+Una vez establecida la conexión, podemos consultar los registros almacenados en una tabla mediante instrucciones SQL.
+
+Para obtener todos los artículos utilizaremos:
+
+```php
+$consulta = "SELECT * FROM ARTICULOS";
+```
+
+La instrucción `SELECT` permite consultar información almacenada en una tabla.
+
+El asterisco `*` indica que queremos obtener todas las columnas.
+
+Para ejecutar la consulta utilizamos:
+
+```php
+$resultados = mysqli_query($conexion, $consulta);
+```
+
+La función `mysqli_query()` ejecuta la consulta SQL utilizando la conexión indicada y devuelve un resultado que podremos recorrer para obtener los registros.
+
+También es recomendable comprobar si la consulta se ha ejecutado correctamente:
+
+```php
+if (!$resultados) {
+    echo "Error al ejecutar la consulta";
+    exit();
+}
+```
+
+De esta manera podemos detectar posibles errores relacionados con la consulta SQL.
+
+### 5. Recuperar los registros de una consulta
+
+Una vez ejecutada la consulta, necesitamos recuperar los registros obtenidos para poder trabajar con ellos desde PHP.
+
+MySQLi dispone de diferentes funciones para recuperar los resultados. Entre ellas destacan `mysqli_fetch_row()` y `mysqli_fetch_assoc()`.
+
+**mysqli_fetch_row()**
+
+Obtiene cada registro en forma de array numérico. Para acceder a los valores utilizamos índices numéricos:
+
+```php
+while ($fila = mysqli_fetch_row($resultados)) {
+    echo $fila[0];
+}
+```
+
+Por ejemplo:
+
+- `$fila[0]`: CODIGOARTICULO.
+- `$fila[1]`: SECCION.
+- `$fila[2]`: NOMBREARTICULO.
+- `$fila[3]`: PRECIO.
+
+**mysqli_fetch_assoc()**
+
+Obtiene cada registro en forma de array asociativo. Las claves del array corresponden a los nombres de las columnas de la tabla.
+
+```php
+while ($fila = mysqli_fetch_assoc($resultados)) {
+    echo $fila["CODIGOARTICULO"];
+}
+```
+
+Por ejemplo:
+
+- `$fila["CODIGOARTICULO"]`: código del artículo.
+- `$fila["SECCION"]`: sección del artículo.
+- `$fila["NOMBREARTICULO"]`: nombre del artículo.
+- `$fila["PRECIO"]`: precio del artículo.
+
+La principal diferencia es que `mysqli_fetch_row()` utiliza índices numéricos, mientras que `mysqli_fetch_assoc()` utiliza los nombres de las columnas.
+
+En nuestros ejemplos utilizaremos principalmente `mysqli_fetch_assoc()`, ya que permite identificar más fácilmente los campos con los que estamos trabajando.
+
+### 6. Mostrar los datos en formato de tabla
+
+Una vez recuperados los registros, podemos mostrarlos en una tabla HTML.
+
+Para ello combinaremos PHP y HTML, generando dinámicamente una fila por cada registro obtenido de la base de datos.
+
+Por ejemplo:
+
+```php
+while ($fila = mysqli_fetch_assoc($resultados)) {
+    echo "<tr>";
+    echo "<td>" . htmlspecialchars($fila["CODIGOARTICULO"]) . "</td>";
+    echo "<td>" . htmlspecialchars($fila["SECCION"]) . "</td>";
+    echo "<td>" . htmlspecialchars($fila["NOMBREARTICULO"]) . "</td>";
+    echo "</tr>";
+}
+```
+
+La función `htmlspecialchars()` convierte determinados caracteres especiales en entidades HTML, ayudando a evitar que los datos almacenados se interpreten como código HTML o JavaScript.
+
+**Dar formato a los precios**
+
+Para mostrar correctamente los precios podemos utilizar la función `number_format()`:
+
+```php
+number_format($fila["PRECIO"], 2, ",", ".");
+```
+
+Esta función recibe cuatro argumentos:
+
+- El primer argumento es el número que queremos formatear.
+- El segundo indica el número de decimales.
+- El tercero indica el separador decimal.
+- El cuarto indica el separador de miles.
+
+Por ejemplo, el valor `459990.00` se mostrará como `459.990,00`.
+
+### 7. Ejemplo completo: mostrar los artículos en una tabla HTML
+
+A continuación combinaremos todo lo aprendido para mostrar los artículos almacenados en nuestra base de datos mediante una tabla HTML.
+
+```php
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de artículos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f5f9;
+            color: #263238;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .contenedor {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #263b5e;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .introduccion {
+            color: #65748b;
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .tabla-contenedor {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 950px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5eaf0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background: #315b91;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: #f4f7fb;
+        }
+
+        tr:hover {
+            background: #eaf1fa;
+        }
+
+        .precio {
+            text-align: right;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .importado-si {
+            color: #27623b;
+            font-weight: bold;
+        }
+
+        .importado-no {
+            color: #a33b3b;
+            font-weight: bold;
+        }
+
+        .contador {
+            display: inline-block;
+            background: #e5edf8;
+            color: #315b91;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            background: #fdeaea;
+            border: 1px solid #efc2c2;
+            color: #a33b3b;
+            padding: 15px;
+            border-radius: 7px;
+            margin: 20px 0;
+        }
+
+        footer {
+            text-align: center;
+            color: #8491a3;
+            font-size: 13px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <h1>Listado de artículos</h1>
+
+    <p class="introduccion">
+        Información de los artículos almacenados en nuestra base de datos MySQL.
+    </p>
+
+    <hr>
+
+    <?php
+
+    // ==========================================
+    // 1. CONECTAR CON LA BASE DE DATOS
+    // ==========================================
+
+    include(__DIR__ . "/config.php");
+
+    $conexion = mysqli_connect(
+        $DB_HOST,
+        $DB_USERNAME,
+        $DB_PASSWORD,
+        $DB_DATABASE
+    );
+
+    // Comprobar si existe un error de conexión
+
+    if (mysqli_connect_errno()) {
+        echo '<div class="error">Fallo al conectar con la base de datos.</div>';
+        exit();
+    }
+
+    // Configurar el juego de caracteres
+
+    $conexion->set_charset("utf8mb4");
+
+
+    // ==========================================
+    // 2. REALIZAR LA CONSULTA
+    // ==========================================
+
+    $consulta = "SELECT * FROM ARTICULOS";
+
+    $resultados = mysqli_query($conexion, $consulta);
+
+    // Comprobar si la consulta se ejecutó correctamente
+
+    if (!$resultados) {
+        echo '<div class="error">Error al realizar la consulta.</div>';
+
+        mysqli_close($conexion);
+        exit();
+    }
+
+
+    // ==========================================
+    // 3. MOSTRAR LOS RESULTADOS
+    // ==========================================
+
+    $total_articulos = mysqli_num_rows($resultados);
+
+    echo '<div class="tabla-contenedor">';
+
+    echo '<div class="contador">';
+    echo "Total de artículos: " . $total_articulos;
+    echo '</div>';
+
+    echo "<table>";
+
+    // Encabezados de la tabla
+
+    echo "<tr>
+        <th>CÓDIGO</th>
+        <th>SECCIÓN</th>
+        <th>DESCRIPCIÓN</th>
+        <th>PRECIO</th>
+        <th>FECHA</th>
+        <th>IMPORTADO</th>
+        <th>ORIGEN</th>
+        <th>FOTO</th>
+    </tr>";
+
+
+    // Recorrer los registros obtenidos
+
+    while ($fila = mysqli_fetch_assoc($resultados)) {
+
+        echo "<tr>";
+
+        echo "<td>" .
+            htmlspecialchars($fila["CODIGOARTICULO"]) .
+            "</td>";
+
+        echo "<td>" .
+            htmlspecialchars($fila["SECCION"]) .
+            "</td>";
+
+        echo "<td>" .
+            htmlspecialchars($fila["NOMBREARTICULO"]) .
+            "</td>";
+
+        echo '<td class="precio">$' .
+            number_format((float)$fila["PRECIO"], 2, ",", ".") .
+            "</td>";
+
+        echo "<td>" .
+            htmlspecialchars($fila["FECHA"]) .
+            "</td>";
+
+        // Mostrar si el artículo es importado
+
+        if ($fila["IMPORTADO"] == "SI") {
+            echo '<td class="importado-si">Sí</td>';
+        } else {
+            echo '<td class="importado-no">No</td>';
+        }
+
+        echo "<td>" .
+            htmlspecialchars($fila["PAISORIGEN"]) .
+            "</td>";
+
+        echo "<td>" .
+            htmlspecialchars($fila["FOTO"]) .
+            "</td>";
+
+        echo "</tr>";
+    }
+
+    echo "</table>";
+
+    echo "</div>";
+
+
+    // ==========================================
+    // 4. LIBERAR RESULTADOS Y CERRAR CONEXIÓN
+    // ==========================================
+
+    mysqli_free_result($resultados);
+
+    mysqli_close($conexion);
+
+    ?>
+
+    <footer>
+        PHP desde cero · Conexión a MySQL y consulta de datos
+    </footer>
+
+</div>
+
+</body>
+</html>
+
+```
+
+En este ejemplo:
+
+1. Incluimos el archivo `config.php` para obtener los datos de conexión.
+2. Establecemos la conexión con MySQL mediante `mysqli_connect()`.
+3. Comprobamos que la conexión se haya realizado correctamente.
+4. Configuramos el juego de caracteres utilizando `set_charset()`.
+5. Ejecutamos una consulta SQL mediante `mysqli_query()`.
+6. Recuperamos los registros utilizando `mysqli_fetch_assoc()`.
+7. Generamos una tabla HTML con los datos obtenidos.
+8. Liberamos los resultados y cerramos la conexión.
+
+**Nota:** en este ejemplo la columna FOTO muestra el nombre del archivo de imagen almacenado en la base de datos. Para visualizar las imágenes directamente sería necesario utilizar una etiqueta HTML `<img>` y disponer de los archivos correspondientes en el servidor.
+
+### 8. Liberar resultados y cerrar la conexión
+
+Cuando terminamos de utilizar los resultados de una consulta, podemos liberar la memoria utilizada mediante:
+
+```php
+mysqli_free_result($resultados);
+```
+
+Finalmente, cerramos la conexión con la base de datos:
+
+```php
+mysqli_close($conexion);
+```
+
+Esto permite liberar los recursos que ya no necesitamos.
+
+### Resumen
+
+- MySQL permite almacenar y organizar información en bases de datos.
+- phpMyAdmin permite administrar bases de datos mediante una interfaz gráfica.
+- Podemos importar tablas y registros mediante archivos SQL.
+- `config.php` permite centralizar los datos de conexión.
+- `mysqli_connect()` establece la conexión entre PHP y MySQL.
+- `set_charset("utf8mb4")` configura el juego de caracteres de la conexión.
+- `mysqli_query()` ejecuta consultas SQL.
+- `SELECT * FROM ARTICULOS` obtiene todos los campos de todos los registros de la tabla.
+- `mysqli_fetch_row()` obtiene cada registro en forma de array numérico.
+- `mysqli_fetch_assoc()` obtiene cada registro en forma de array asociativo.
+- `htmlspecialchars()` ayuda a mostrar los datos de forma segura en HTML.
+- `number_format()` permite dar formato a los valores numéricos.
+- `mysqli_free_result()` libera los resultados de una consulta.
+- `mysqli_close()` cierra la conexión con la base de datos.
