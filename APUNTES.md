@@ -6372,3 +6372,253 @@ Esto permite liberar los recursos que ya no necesitamos.
 - `number_format()` permite dar formato a los valores numéricos.
 - `mysqli_free_result()` libera los resultados de una consulta.
 - `mysqli_close()` cierra la conexión con la base de datos.
+
+## 28. Mostrando productos en una página de búsqueda
+
+### 1. Formulario de búsqueda
+
+Se crea un formulario HTML utilizando el método GET para enviar el término de búsqueda a PHP.
+
+```html
+    <form method="GET" action="">
+        <input type="text" name="buscar" placeholder="Buscar artículo...">
+        <input type="submit" value="Buscar">
+    </form>
+```
+
+- `method="GET"`: envía los datos mediante parámetros en la URL.
+- `action=""`: envía los datos a la misma página.
+- `name="buscar"`: identifica el parámetro que recibirá PHP.
+
+### 2. Conexión con la base de datos
+
+Se incluye el archivo `config.php`, que contiene las credenciales de conexión.
+
+    require("config.php");
+
+Se establece la conexión:
+
+```php
+    $conexion = mysqli_connect(
+        $DB_HOST,
+        $DB_USERNAME,
+        $DB_PASSWORD,
+        $DB_DATABASE
+    );
+```
+
+Se comprueba si existe algún error:
+
+```php
+    if (mysqli_connect_errno()) {
+        echo "Fallo al conectar con la base de datos";
+        exit();
+    }
+```
+
+Se configura la codificación de caracteres:
+
+```php
+    $conexion->set_charset("utf8mb4");
+```
+
+### 3. Preparación de la consulta SQL
+
+Se crea una consulta para recuperar los artículos cuyo nombre coincida con el término buscado.
+
+```php
+    $consulta = "SELECT * FROM ARTICULOS WHERE NOMBREARTICULO LIKE ?";
+```
+
+- `SELECT *`: selecciona todas las columnas.
+- `FROM ARTICULOS`: indica la tabla.
+- `WHERE`: establece una condición.
+- `LIKE`: permite buscar coincidencias parciales.
+- `?`: marcador de posición para un parámetro.
+
+### 4. Consultas preparadas
+
+Se prepara la consulta:
+
+```php
+    $stmt = mysqli_prepare($conexion, $consulta);
+```
+
+Se comprueba que la preparación haya sido correcta:
+
+```php
+    if (!$stmt) {
+        echo "Error al preparar la consulta";
+        exit();
+    }
+```
+
+Se recoge el término de búsqueda:
+
+```php
+    $buscar = $_GET['buscar'] ?? '';
+```
+
+El operador `??` asigna una cadena vacía si el parámetro no existe o es `null`.
+
+Se agregan los comodines `%`:
+
+```php
+    $buscar = "%" . $buscar . "%";
+```
+
+El carácter `%` representa cualquier cantidad de caracteres en SQL. Permite encontrar coincidencias al principio, en medio o al final del nombre.
+
+Se vincula el parámetro:
+
+```php
+    mysqli_stmt_bind_param($stmt, "s", $buscar);
+```
+
+Tipos de parámetros:
+
+- `s`: cadena de texto.
+- `i`: número entero.
+- `d`: número decimal.
+- `b`: dato binario.
+
+Las consultas preparadas separan los datos de las instrucciones SQL y ayudan a evitar la inyección SQL.
+
+### 5. Ejecución y obtención de resultados
+
+Se ejecuta la consulta:
+
+```php
+    if (!mysqli_stmt_execute($stmt)) {
+        echo "Error al ejecutar la consulta";
+        exit();
+    }
+```
+
+Se obtienen los resultados:
+
+```php
+    $resultados = mysqli_stmt_get_result($stmt);
+```
+
+`mysqli_stmt_get_result()` devuelve el conjunto de resultados de la consulta preparada.
+
+Nota: esta función requiere que PHP tenga disponible el controlador `mysqlnd`.
+
+### 6. Mostrar los registros en una tabla HTML
+
+Se utiliza un bucle `while` para recorrer los resultados:
+
+```php
+    while ($fila = mysqli_fetch_array($resultados, MYSQLI_ASSOC)) {
+        // Mostrar los datos.
+    }
+```
+
+`mysqli_fetch_array()` recupera una fila en cada iteración.
+
+El parámetro `MYSQLI_ASSOC` permite acceder a los datos mediante los nombres de las columnas:
+
+```php
+    $fila['CODIGOARTICULO']
+    $fila['SECCION']
+    $fila['NOMBREARTICULO']
+    $fila['PRECIO']
+```
+
+Para imprimir los datos en HTML se utiliza `htmlspecialchars()`:
+
+```php
+    htmlspecialchars($fila['NOMBREARTICULO'], ENT_QUOTES, 'UTF-8')
+```
+
+Esta función convierte caracteres especiales en entidades HTML para evitar que se interpreten como código HTML o JavaScript.
+- `ENT_QUOTES` : Convierte las comillas dobles y simples, además de caracteres especiales habituales.
+- `UTF_8`: Indica la codificación de caracteres utilizada.
+
+Ejemplo de generación de filas:
+
+```php
+    while ($fila = mysqli_fetch_array($resultados, MYSQLI_ASSOC)) {
+        echo "<tr>
+            <td>" . htmlspecialchars($fila['CODIGOARTICULO'], ENT_QUOTES, 'UTF-8') . "</td>
+            <td>" . htmlspecialchars($fila['SECCION'], ENT_QUOTES, 'UTF-8') . "</td>
+            <td>" . htmlspecialchars($fila['NOMBREARTICULO'], ENT_QUOTES, 'UTF-8') . "</td>
+            <td>$" . number_format($fila['PRECIO'], 0, ',', '.') . "</td>
+            <td>" . htmlspecialchars($fila['FECHA'], ENT_QUOTES, 'UTF-8') . "</td>
+            <td>" . htmlspecialchars($fila['IMPORTADO'], ENT_QUOTES, 'UTF-8') . "</td>
+            <td>" . htmlspecialchars($fila['PAISORIGEN'], ENT_QUOTES, 'UTF-8') . "</td>
+            <td>" . htmlspecialchars($fila['FOTO'], ENT_QUOTES, 'UTF-8') . "</td>
+        </tr>";
+    }
+```
+
+Importante:
+
+- `htmlspecialchars()` protege la salida HTML.
+- Las consultas preparadas protegen los parámetros de la consulta SQL.
+- Son medidas de seguridad diferentes y complementarias.
+- Los datos se guardan normalmente en la base de datos y se escapan al mostrarlos.
+
+### 7. Formatear los precios
+
+Se utiliza `number_format()` para presentar los precios con separadores de miles:
+
+```php
+    number_format($fila['PRECIO'], 0, ',', '.')
+```
+
+Ejemplo:
+
+```php
+    "$" . number_format($fila['PRECIO'], 0, ',', '.')
+```
+
+Un precio de `1500000` se mostrará como `$1.500.000`.
+
+### 8. Hoja de estilos CSS externa
+
+Se importa el archivo `styles.css` desde el documento HTML:
+
+```html
+    <link rel="stylesheet" href="styles.css">
+```
+
+Propiedades CSS utilizadas:
+
+- `font-family`: establece la tipografía.
+- `background-color`: define el color de fondo.
+- `text-align`: alinea el contenido.
+- `margin`: establece márgenes externos.
+- `padding`: establece espacios internos.
+- `border-collapse`: combina los bordes de una tabla.
+- `box-shadow`: añade sombras.
+- `border-radius`: redondea las esquinas.
+- `:hover`: aplica estilos al pasar el cursor.
+- `:focus`: aplica estilos cuando un campo recibe el foco.
+- `:nth-child(even)`: selecciona las filas pares.
+
+### 9. Resumen de funciones PHP y MySQLi
+
+| Función | Utilidad |
+|---|---|
+| `require()` | Incluye un archivo externo. |
+| `mysqli_connect()` | Establece la conexión con MySQL. |
+| `mysqli_connect_errno()` | Comprueba errores de conexión. |
+| `exit()` | Detiene la ejecución. |
+| `set_charset()` | Configura la codificación. |
+| `mysqli_prepare()` | Prepara una consulta SQL. |
+| `mysqli_stmt_bind_param()` | Vincula parámetros. |
+| `mysqli_stmt_execute()` | Ejecuta una consulta preparada. |
+| `mysqli_stmt_get_result()` | Obtiene los resultados. |
+| `mysqli_fetch_array()` | Recupera una fila. |
+| `htmlspecialchars()` | Escapa caracteres especiales para HTML. |
+| `number_format()` | Formatea números. |
+
+### Resultado del ejercicio
+
+Se obtiene una página web que muestra los artículos almacenados en MySQL y permite buscarlos por nombre mediante un formulario.
+
+Los resultados se presentan en una tabla HTML, con precios formateados y estilos definidos en un archivo CSS externo.
+
+Se utilizan consultas preparadas para evitar la inyección SQL y `htmlspecialchars()` para proteger la salida HTML.
