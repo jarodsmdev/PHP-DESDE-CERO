@@ -6622,3 +6622,266 @@ Se obtiene una página web que muestra los artículos almacenados en MySQL y per
 Los resultados se presentan en una tabla HTML, con precios formateados y estilos definidos en un archivo CSS externo.
 
 Se utilizan consultas preparadas para evitar la inyección SQL y `htmlspecialchars()` para proteger la salida HTML.
+
+## 29. Insertar registros desde formulario web
+
+### 29.1. Objetivo
+
+Implementar un formulario web que permita insertar nuevos registros en una tabla de una base de datos MySQL utilizando PHP y MySQLi.
+
+Además, se incorporan medidas de seguridad para proteger la consulta SQL frente a ataques de **SQL Injection** y evitar la ejecución de código HTML o JavaScript malicioso al mostrar los datos ingresados.
+
+### 29.2. Conexión a la base de datos
+
+Se establecen las credenciales necesarias para conectarse a la base de datos `pruebas` mediante la función `mysqli_connect()`.
+
+```php
+$DB_HOST = "localhost";
+$DB_USERNAME = "root";
+$DB_PASSWORD = "";
+$DB_DATABASE = "pruebas";
+
+$conexion = mysqli_connect(
+    $DB_HOST,
+    $DB_USERNAME,
+    $DB_PASSWORD,
+    $DB_DATABASE
+);
+```
+
+Se comprueba que la conexión se haya realizado correctamente:
+
+```php
+if (!$conexion) {
+    die("Error al conectar con la base de datos.");
+}
+```
+
+También se establece la codificación UTF-8 para permitir el almacenamiento correcto de caracteres especiales, tildes y símbolos:
+
+```php
+mysqli_set_charset($conexion, "utf8mb4");
+```
+
+### 29.3. Recepción de datos mediante POST
+
+Los datos enviados desde el formulario HTML se reciben utilizando la variable superglobal `$_POST`.
+
+Se utiliza `trim()` para eliminar espacios innecesarios al principio y al final de los campos de texto.
+
+```php
+$cod = trim($_POST["c_art"] ?? "");
+$sec = trim($_POST["seccion"] ?? "");
+$nom = trim($_POST["n_art"] ?? "");
+$pre = $_POST["precio"] ?? "";
+$fec = trim($_POST["fecha"] ?? "");
+$imp = trim($_POST["importado"] ?? "");
+$por = trim($_POST["p_orig"] ?? "");
+```
+
+El operador `??` permite establecer un valor predeterminado cuando una variable no está definida.
+
+**Importante:** Para que PHP reciba los datos mediante `$_POST`, el formulario HTML debe utilizar:
+
+```html
+<form method="POST" action="insertar_registro.php">
+```
+
+### 29.4. Validación del precio
+
+Se comprueba que el precio ingresado sea numérico y que no sea negativo.
+
+```php
+if (!is_numeric($pre) || (float)$pre < 0) {
+    die("Error: el precio debe ser un número válido.");
+}
+
+$pre = (float)$pre;
+```
+
+De esta manera se evita que se ingresen valores que no correspondan a un precio válido.
+
+### 29.5. Protección contra SQL Injection
+
+Para evitar ataques de SQL Injection se utilizan **consultas preparadas (Prepared Statements)** de MySQLi.
+
+Una consulta SQL tradicional puede ser vulnerable cuando se concatenan directamente los datos ingresados por el usuario.
+
+En cambio, las consultas preparadas separan la instrucción SQL de los valores que se desean insertar.
+
+Se define la consulta utilizando signos de interrogación como marcadores de posición:
+
+```php
+$consulta = "INSERT INTO ARTICULOS
+(CODIGOARTICULO, SECCION, NOMBREARTICULO, PRECIO, FECHA, IMPORTADO, PAISORIGEN)
+VALUES (?, ?, ?, ?, ?, ?, ?)";
+```
+
+Posteriormente, se prepara la consulta:
+
+```php
+$stmt = mysqli_prepare($conexion, $consulta);
+
+if (!$stmt) {
+    die("Error al preparar la consulta.");
+}
+```
+
+`die`: Permite finalizar inmediatamente la ejecución del script y permite mostrar un mensaje.
+
+Se utiliza `mysqli_stmt_bind_param()` para asociar los valores a los marcadores de posición:
+
+```php
+mysqli_stmt_bind_param(
+    $stmt,
+    "sssdsss",
+    $cod,
+    $sec,
+    $nom,
+    $pre,
+    $fec,
+    $imp,
+    $por
+);
+```
+
+El primer parámetro `"sssdsss"` indica el tipo de dato de cada variable:
+
+- `s`: cadena de texto (string).
+- `d`: número decimal o de tipo double.
+- `i`: número entero (integer).
+- `b`: dato binario (blob).
+
+En este caso se utilizan siete parámetros: seis cadenas de texto y un número decimal.
+
+**Ventaja:** Los datos ingresados no pueden modificar la estructura de la consulta SQL, reduciendo considerablemente el riesgo de SQL Injection.
+
+### 29.6. Ejecución de la consulta
+
+Una vez preparada la consulta y asociados los parámetros, se ejecuta mediante:
+
+```php
+if (mysqli_stmt_execute($stmt)) {
+    echo "Registro guardado";
+} else {
+    echo "Error al guardar el registro.";
+}
+```
+
+Si la operación se realiza correctamente, significa que el nuevo artículo fue insertado en la tabla `ARTICULOS`.
+
+### 29.7. Protección al mostrar los datos mediante htmlspecialchars()
+
+Además de proteger la consulta SQL, es importante proteger la salida de información hacia el navegador.
+
+Para ello se utiliza `htmlspecialchars()`, que convierte caracteres especiales en entidades HTML.
+
+Se define una función auxiliar:
+
+```php
+function seguro(string $dato): string {
+    return htmlspecialchars(
+        (string)$dato,
+        ENT_QUOTES,
+        "UTF-8"
+    );
+}
+```
+
+Esta función permite mostrar los datos ingresados sin interpretar etiquetas HTML o código JavaScript.
+
+Por ejemplo, si un usuario introduce código HTML o JavaScript en el campo del nombre del artículo, este se mostrará como texto en lugar de ejecutarse en el navegador.
+
+Esto ayuda a prevenir ataques de tipo **Cross-Site Scripting (XSS)**.
+
+### 29.8. Presentación del resultado
+
+Después de insertar correctamente el registro, se genera una página HTML desde PHP que muestra un mensaje de confirmación y una tabla con los datos ingresados.
+
+Se utiliza una estructura de tabla con las etiquetas:
+
+- `<table>`: crea la tabla.
+- `<tr>`: define una fila.
+- `<th>`: define una celda de encabezado.
+- `<td>`: muestra el contenido de cada celda.
+
+Los valores se muestran utilizando la función `seguro()` para evitar que se interpreten como código HTML.
+
+También se incorpora una hoja de estilos externa:
+
+```html
+<link rel="stylesheet" href="resultado.css">
+```
+
+El archivo `resultado.css` permite personalizar la apariencia de la página, incluyendo:
+
+- Fondo con degradado azul.
+- Contenedor blanco centrado.
+- Bordes redondeados.
+- Sombras.
+- Mensaje de confirmación.
+- Tabla con estilos personalizados.
+- Botón para regresar al formulario.
+- Diseño adaptable a dispositivos móviles.
+
+### 29.9. Cierre de conexiones
+
+Finalmente, se cierran la consulta preparada y la conexión a la base de datos:
+
+```php
+mysqli_stmt_close($stmt);
+mysqli_close($conexion);
+```
+
+Esto permite liberar los recursos utilizados durante la ejecución del programa.
+
+### 29.10. Estructura del proyecto
+
+Los archivos utilizados quedan organizados de la siguiente manera:
+
+```text
+mi_proyecto/
+│
+├── index.html
+├── insertar_registro.php
+├── styles.css
+└── resultado.css
+```
+
+- `index.html`: contiene el formulario para ingresar los datos del artículo.
+- `styles.css`: define los estilos visuales del formulario.
+- `insertar_registro.php`: recibe los datos, valida la información, ejecuta la consulta preparada y muestra el resultado.
+- `resultado.css`: define los estilos de la página de confirmación.
+
+### 29.11. Medidas de seguridad implementadas
+
+| Medida | Función |
+|---|---|
+| Consultas preparadas | Previenen la manipulación de instrucciones SQL mediante los datos ingresados. |
+| `mysqli_stmt_bind_param()` | Vincula los datos a la consulta preparada. |
+| `trim()` | Elimina espacios innecesarios en los campos de texto. |
+| `is_numeric()` | Comprueba que el precio sea numérico. |
+| `htmlspecialchars()` | Ayuda a prevenir ataques XSS al mostrar los datos. |
+| `utf8mb4` | Permite trabajar correctamente con caracteres especiales. |
+| Método POST | Envía los datos sin incluirlos en la URL. |
+
+**Observación:** Utilizar POST no evita por sí solo SQL Injection. La protección principal se consigue mediante las consultas preparadas.
+
+Para un entorno de producción también sería recomendable validar todos los campos, comprobar el formato de la fecha, incorporar protección CSRF y utilizar un usuario de MySQL con permisos limitados.
+
+### 29.12. Resultado final
+
+Se consiguió implementar un sistema de inserción de registros desde un formulario web utilizando PHP y MySQL.
+
+El sistema permite:
+
+1. Ingresar los datos de un artículo desde un formulario HTML.
+2. Enviar la información mediante el método POST.
+3. Recibir y validar los datos en PHP.
+4. Establecer una conexión con la base de datos MySQL.
+5. Insertar los registros utilizando consultas preparadas.
+6. Reducir el riesgo de ataques SQL Injection.
+7. Proteger la visualización de los datos frente a código HTML o JavaScript malicioso.
+8. Mostrar una página de confirmación con los datos del registro insertado.
+
+**Conclusión:** Se implementó una operación de inserción de datos (INSERT) utilizando PHP y MySQLi, incorporando consultas preparadas y mecanismos básicos de validación y escape de salida para mejorar la seguridad de la aplicación web.
