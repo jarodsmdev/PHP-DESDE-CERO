@@ -1,0 +1,97 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: #1e293b;
+}
+
+/* Título */
+h1 {
+    text-align: center;
+    color: #1e40af;
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+/* Línea separadora */
+hr {
+    width: 80%;
+    margin: 0 auto 35px;
+    border: none;
+    height: 2px;
+    background: #93c5fd;
+}
+
+/* Formulario */
+form {
+    background-color: white;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 12px 15px;
+}
+
+/* Etiquetas */
+td {
+    font-size: 15px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* Campos de texto */
+input[type="text"] {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s;
+    background-color: #f8fafc;
+}
+
+input[type="text"]:focus {
+    border-color: #2563eb;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Botones */
+input[type="submit"],
+input[type="reset"] {
+    padding: 11px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    min-width: 110px;
+}
+
+/* Botón enviar */
+input[type="submit"] {
+    background-color: #2563eb;
+    color: white;
+}
+
+input[type="submit"]:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+}

@@ -6885,3 +6885,382 @@ El sistema permite:
 8. Mostrar una página de confirmación con los datos del registro insertado.
 
 **Conclusión:** Se implementó una operación de inserción de datos (INSERT) utilizando PHP y MySQLi, incorporando consultas preparadas y mecanismos básicos de validación y escape de salida para mejorar la seguridad de la aplicación web.
+
+## 30. Eliminar registros
+
+En esta sección aprenderemos a eliminar registros de una tabla de una base de datos MySQL utilizando PHP y MySQLi.
+
+Para ello, crearemos un formulario que solicitará el código del artículo que queremos eliminar. PHP recibirá ese código, preparará una consulta SQL `DELETE` y la ejecutará para eliminar el registro correspondiente.
+
+También comprobaremos si la consulta ha eliminado algún registro y mostraremos un mensaje dependiendo del resultado de la operación.
+
+### 30.1. Crear el formulario HTML
+
+Primero creamos un formulario que permita introducir el código del artículo que deseamos eliminar.
+
+```html
+<form name="form1" method="POST" action="eliminar_registro.php">
+
+    <label for="c_art">Código del artículo:</label>
+
+    <input type="text" name="c_art" id="c_art">
+
+    <input type="submit" name="enviar" value="Eliminar">
+
+    <input type="reset" name="Borrar" value="Limpiar">
+
+</form>
+```
+
+**Explicación:**
+
+- `method="POST"`: indica que los datos se enviarán mediante el método POST.
+- `action="eliminar_registro.php"`: indica el archivo PHP que recibirá y procesará los datos.
+- `name="c_art"`: identifica el campo que contiene el código del artículo.
+- `type="submit"`: envía los datos del formulario.
+- `type="reset"`: limpia los campos del formulario.
+
+Cuando el usuario introduce un código y pulsa el botón Eliminar, el navegador envía ese valor al archivo `eliminar_registro.php`.
+
+### 30.2. Conexión a la base de datos
+
+En el archivo PHP establecemos la conexión con nuestra base de datos utilizando `mysqli_connect()`.
+
+```php
+$DB_HOST = "localhost";
+$DB_USERNAME = "root";
+$DB_PASSWORD = "";
+$DB_DATABASE = "pruebas";
+
+$conexion = mysqli_connect(
+    $DB_HOST,
+    $DB_USERNAME,
+    $DB_PASSWORD,
+    $DB_DATABASE
+);
+```
+
+Comprobamos si la conexión se ha establecido correctamente:
+
+```php
+if (!$conexion) {
+    die("Error al conectar con la base de datos.");
+}
+```
+
+Si la conexión falla, `die()` muestra el mensaje indicado y detiene la ejecución del script.
+
+También configuramos la conexión para trabajar con caracteres UTF-8:
+
+```php
+mysqli_set_charset($conexion, "utf8mb4");
+```
+
+### 30.3. Recibir los datos del formulario
+
+Para recuperar el código del artículo utilizamos la variable superglobal `$_POST`.
+
+```php
+$cod = trim($_POST["c_art"] ?? "");
+```
+
+Aquí utilizamos dos elementos:
+
+- `$_POST["c_art"]`: recupera el valor enviado desde el formulario.
+- `?? ""`: establece una cadena vacía si el campo no existe o no contiene un valor disponible.
+- `trim()`: elimina los espacios en blanco al principio y al final de la cadena.
+
+Guardamos el resultado en la variable `$cod`, que utilizaremos posteriormente en nuestra consulta SQL.
+
+### 30.4. Consulta SQL DELETE
+
+Para eliminar registros de una tabla utilizamos la sentencia SQL `DELETE`.
+
+Su sintaxis general es:
+
+```sql
+DELETE FROM nombre_tabla
+WHERE condicion;
+```
+
+Por ejemplo:
+
+```sql
+DELETE FROM ARTICULOS
+WHERE CODIGOARTICULO = 'A001';
+```
+
+Esta consulta elimina el registro de la tabla `ARTICULOS` cuyo código sea `A001`.
+
+**Importante:** debemos utilizar `WHERE` para indicar qué registros queremos eliminar. Si omitimos esta cláusula, se eliminarán todos los registros de la tabla.
+
+En nuestro caso, utilizaremos una consulta preparada:
+
+```php
+$consulta = "DELETE FROM ARTICULOS WHERE CODIGOARTICULO = ?";
+```
+
+El signo `?` representa un parámetro cuyo valor proporcionaremos posteriormente.
+
+### 30.5. Preparar la consulta
+
+Utilizamos `mysqli_prepare()` para preparar la consulta SQL:
+
+```php
+$stmt = mysqli_prepare($conexion, $consulta);
+```
+
+Esta función recibe dos argumentos:
+
+- `$conexion`: conexión con la base de datos.
+- `$consulta`: sentencia SQL que queremos preparar.
+
+Si la consulta no se puede preparar, la función devuelve `false`.
+
+Por eso comprobamos su resultado:
+
+```php
+if ($stmt) {
+    // Continuar con la operación.
+} else {
+    // La consulta no se pudo preparar.
+}
+```
+
+Las consultas preparadas permiten separar la estructura SQL de los valores que se envían, ayudando a prevenir ataques de inyección SQL.
+
+### 30.6. Asociar los parámetros
+
+Una vez preparada la consulta, utilizamos `mysqli_stmt_bind_param()` para asociar el valor del código con el signo `?`.
+
+```php
+mysqli_stmt_bind_param(
+    $stmt,
+    "s",
+    $cod
+);
+```
+
+Esta función recibe tres argumentos:
+
+1. `$stmt`: la sentencia preparada.
+2. `"s"`: indica el tipo de dato del parámetro.
+3. `$cod`: variable cuyo valor se asociará al parámetro.
+
+Los principales indicadores de tipo son:
+
+| Indicador | Tipo de dato |
+|---|---|
+| `s` | Cadena de texto (string). |
+| `i` | Número entero (integer). |
+| `d` | Número decimal (double). |
+| `b` | Datos binarios (blob). |
+
+En nuestro ejemplo utilizamos `"s"` porque estamos tratando el código del artículo como una cadena de texto.
+
+### 30.7. Ejecutar la consulta
+
+Para ejecutar la sentencia preparada utilizamos `mysqli_stmt_execute()`:
+
+```php
+if (mysqli_stmt_execute($stmt)) {
+    // La consulta se ejecutó correctamente.
+} else {
+    // Se produjo un error al ejecutar la consulta.
+}
+```
+
+Esta función devuelve `true` si la sentencia se ejecutó correctamente y `false` si se produjo un error.
+
+Sin embargo, debemos tener en cuenta algo importante:
+
+**Que la consulta se ejecute correctamente no significa necesariamente que se haya eliminado algún registro.**
+
+Por ejemplo, podemos enviar un código que no exista en la tabla. En ese caso, la consulta se ejecutará sin errores, pero no eliminará ninguna fila.
+
+Para comprobarlo utilizaremos `mysqli_stmt_affected_rows()`.
+
+### 30.8. Comprobar las filas afectadas
+
+La función `mysqli_stmt_affected_rows()` permite conocer cuántas filas fueron afectadas por la última operación ejecutada mediante una sentencia preparada.
+
+```php
+$filas_afectadas = mysqli_stmt_affected_rows($stmt);
+```
+
+En nuestro caso, como estamos utilizando una sentencia `DELETE`, nos permite saber cuántos registros se han eliminado.
+
+Podemos comprobar el resultado mediante una estructura condicional:
+
+```php
+if ($filas_afectadas > 0) {
+
+    echo "El artículo se ha eliminado correctamente.";
+
+} else {
+
+    echo "No se encontró ningún artículo con ese código.";
+
+}
+```
+
+Los resultados posibles son:
+
+| Resultado | Significado |
+|---|---|
+| `0` | No se eliminó ningún registro. |
+| `1` | Se eliminó un registro. |
+| `2` | Se eliminaron dos registros. |
+| `3` | Se eliminaron tres registros. |
+
+En nuestro ejemplo, como buscamos eliminar un artículo mediante su código, lo habitual será obtener `0` o `1`.
+
+También existe `mysqli_affected_rows()`, que permite consultar las filas afectadas utilizando directamente la conexión:
+
+```php
+mysqli_affected_rows($conexion);
+```
+
+La diferencia es que `mysqli_stmt_affected_rows()` trabaja directamente con la sentencia preparada, por lo que resulta especialmente apropiada en nuestro ejemplo.
+
+### 30.9. Mostrar mensajes dinámicos en HTML
+
+En lugar de escribir una estructura HTML diferente para cada resultado, podemos utilizar variables PHP para almacenar el título, el mensaje y el icono que queremos mostrar.
+
+Primero establecemos unos valores iniciales:
+
+```php
+$titulo = "Error";
+$mensaje = "No se pudo realizar la operación.";
+$icono = "!";
+$clase = "error";
+```
+
+Después modificamos estas variables dependiendo del resultado de la operación.
+
+Por ejemplo, si se elimina correctamente el artículo:
+
+```php
+$titulo = "¡Artículo eliminado!";
+$mensaje = "El artículo se ha eliminado correctamente.";
+$icono = "✓";
+$clase = "exito";
+```
+
+Si no encontramos ningún registro:
+
+```php
+$titulo = "Sin resultados";
+$mensaje = "No se encontró ningún artículo con ese código.";
+```
+
+Finalmente, mostramos las variables dentro del HTML:
+
+```php
+<div class="mensaje <?php echo $clase; ?>">
+
+    <span class="icono">
+        <?php echo $icono; ?>
+    </span>
+
+    <h1>
+        <?php echo htmlspecialchars($titulo, ENT_QUOTES, "UTF-8"); ?>
+    </h1>
+
+    <p>
+        <?php echo htmlspecialchars($mensaje, ENT_QUOTES, "UTF-8"); ?>
+    </p>
+
+</div>
+```
+
+De esta manera, mantenemos una única estructura HTML y cambiamos únicamente su contenido según el resultado.
+
+También utilizamos `htmlspecialchars()` para convertir caracteres especiales y evitar que los textos se interpreten como código HTML.
+
+### 30.10. Diferenciar los mensajes mediante CSS
+
+Podemos utilizar las clases CSS `exito` y `error` para aplicar diferentes estilos dependiendo del resultado.
+
+```css
+/* Mensaje de error */
+.mensaje.error .icono {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.mensaje.error h1 {
+    color: #475569;
+}
+
+/* Mensaje de éxito */
+.mensaje.exito .icono {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.mensaje.exito h1 {
+    color: #15803d;
+}
+```
+
+La clase se establece dinámicamente desde PHP:
+
+```php
+<div class="mensaje <?php echo $clase; ?>">
+```
+
+Si `$clase` contiene `exito`, se aplicarán los estilos de éxito.
+
+Si contiene `error`, se aplicarán los estilos de error.
+
+### 30.11. Cerrar la sentencia y la conexión
+
+Una vez finalizada la operación, debemos liberar los recursos utilizados.
+
+Para cerrar la sentencia preparada utilizamos:
+
+```php
+mysqli_stmt_close($stmt);
+```
+
+Y para cerrar la conexión con la base de datos:
+
+```php
+mysqli_close($conexion);
+```
+
+Es importante cerrar la sentencia únicamente si se ha preparado correctamente y cerrar la conexión cuando ya no necesitemos utilizarla.
+
+---
+
+### Resumen
+
+En esta sección hemos aprendido a eliminar registros de una base de datos utilizando PHP y MySQLi.
+
+Los pasos principales son:
+
+1. Crear un formulario HTML para introducir el código del artículo.
+2. Conectar con la base de datos mediante `mysqli_connect()`.
+3. Recuperar el código enviado mediante `$_POST`.
+4. Preparar una consulta SQL `DELETE` utilizando `mysqli_prepare()`.
+5. Asociar el parámetro con `mysqli_stmt_bind_param()`.
+6. Ejecutar la consulta mediante `mysqli_stmt_execute()`.
+7. Comprobar los registros eliminados con `mysqli_stmt_affected_rows()`.
+8. Mostrar un mensaje dinámico dependiendo del resultado.
+9. Cerrar la sentencia y la conexión con la base de datos.
+
+**Funciones principales utilizadas:**
+
+| Función | Utilidad |
+|---|---|
+| `mysqli_connect()` | Establece la conexión con MySQL. |
+| `mysqli_set_charset()` | Configura el conjunto de caracteres. |
+| `mysqli_prepare()` | Prepara una consulta SQL. |
+| `mysqli_stmt_bind_param()` | Asocia valores a los parámetros. |
+| `mysqli_stmt_execute()` | Ejecuta la consulta preparada. |
+| `mysqli_stmt_affected_rows()` | Devuelve la cantidad de filas afectadas. |
+| `mysqli_stmt_close()` | Cierra la sentencia preparada. |
+| `mysqli_close()` | Cierra la conexión con MySQL. |
+
+**Consideración de seguridad:** eliminar registros es una operación irreversible si no contamos con una copia de seguridad. En aplicaciones reales también debemos validar los datos recibidos, comprobar los permisos del usuario y solicitar confirmación antes de ejecutar una eliminación.
