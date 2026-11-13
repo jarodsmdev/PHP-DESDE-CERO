@@ -7264,3 +7264,311 @@ Los pasos principales son:
 | `mysqli_close()` | Cierra la conexión con MySQL. |
 
 **Consideración de seguridad:** eliminar registros es una operación irreversible si no contamos con una copia de seguridad. En aplicaciones reales también debemos validar los datos recibidos, comprobar los permisos del usuario y solicitar confirmación antes de ejecutar una eliminación.
+
+## 31. Actualizar registros
+
+Para actualizar un registro existente en una tabla de MySQL, utilizamos la instrucción `UPDATE`. Esta permite modificar los valores de uno o varios campos de un registro, identificándolo mediante una condición `WHERE`.
+
+En este ejemplo trabajaremos con la tabla `ARTICULOS`, utilizando PHP y MySQLi para buscar un artículo por su código, mostrar sus datos en un formulario y permitir que el usuario los modifique.
+
+### 31.1. Buscar el registro que queremos actualizar
+
+Primero, creamos un formulario en `buscar.php` para ingresar el código del artículo que deseamos modificar.
+
+```html
+<form class="formulario-articulo" action="pagina_resultado.php" method="POST">
+    <label for="buscar">Código del artículo</label>
+    <input type="text" name="buscar" id="buscar">
+    <input type="submit" name="enviar" value="Buscar">
+</form>
+```
+
+- `action="pagina_resultado.php"`: indica el archivo que recibirá los datos.
+- `method="POST"`: permite enviar el código mediante el método POST.
+- `name="buscar"`: identifica el dato que recibiremos en PHP.
+
+### 31.2. Consultar y mostrar los datos del artículo
+
+En `pagina_resultado.php`, recibimos el código enviado desde el formulario y realizamos una consulta `SELECT` para recuperar el artículo correspondiente.
+
+```php
+$codigo = trim($_POST["buscar"] ?? "");
+
+$consulta = "SELECT * FROM ARTICULOS WHERE CODIGOARTICULO = ?";
+
+$stmt = mysqli_prepare($conexion, $consulta);
+
+mysqli_stmt_bind_param($stmt, "s", $codigo);
+
+mysqli_stmt_execute($stmt);
+
+$resultado = mysqli_stmt_get_result($stmt);
+```
+
+**Explicación:**
+
+- `trim()`: elimina espacios al principio y al final del código.
+- `SELECT *`: selecciona todas las columnas de la tabla.
+- `WHERE CODIGOARTICULO = ?`: establece la condición para buscar el artículo.
+- `mysqli_prepare()`: prepara la consulta SQL.
+- `mysqli_stmt_bind_param()`: asocia el código recibido al parámetro de la consulta.
+- `mysqli_stmt_execute()`: ejecuta la consulta.
+- `mysqli_stmt_get_result()`: obtiene el resultado de la consulta.
+
+Si encontramos el artículo, recorremos los resultados y mostramos sus datos en un formulario:
+
+```php
+while ($fila = mysqli_fetch_array($resultado, MYSQLI_ASSOC)) {
+
+    echo "<form class='formulario-articulo' action='actualizar.php' method='POST'>";
+
+    echo "<label>Código del artículo</label>";
+    echo "<input type='text' name='c_art' value='" .
+        htmlspecialchars($fila['CODIGOARTICULO'], ENT_QUOTES, 'UTF-8') . "'>";
+
+    echo "<label>Nombre del artículo</label>";
+    echo "<input type='text' name='n_art' value='" .
+        htmlspecialchars($fila['NOMBREARTICULO'], ENT_QUOTES, 'UTF-8') . "'>";
+
+    echo "<label>Sección</label>";
+    echo "<input type='text' name='seccion' value='" .
+        htmlspecialchars($fila['SECCION'], ENT_QUOTES, 'UTF-8') . "'>";
+
+    echo "<label>Importado</label>";
+    echo "<input type='text' name='importado' value='" .
+        htmlspecialchars($fila['IMPORTADO'], ENT_QUOTES, 'UTF-8') . "'>";
+
+    echo "<label>Precio</label>";
+    echo "<input type='text' name='precio' value='" .
+        number_format($fila['PRECIO'], 0, ',', '.') . "'>";
+
+    echo "<label>Fecha</label>";
+    echo "<input type='text' name='fecha' value='" .
+        htmlspecialchars($fila['FECHA'], ENT_QUOTES, 'UTF-8') . "'>";
+
+    echo "<label>País de origen</label>";
+    echo "<input type='text' name='p_orig' value='" .
+        htmlspecialchars($fila['PAISORIGEN'], ENT_QUOTES, 'UTF-8') . "'>";
+
+    echo "<input type='submit' name='enviar' value='Actualizar'>";
+
+    echo "</form>";
+}
+```
+
+**Aspectos importantes:**
+
+- `$fila`: contiene los datos del artículo recuperado de la base de datos.
+- `MYSQLI_ASSOC`: permite acceder a los valores mediante el nombre de las columnas.
+- `htmlspecialchars()`: convierte caracteres especiales para mostrarlos de forma segura en HTML.
+- `number_format()`: permite mostrar el precio con separador de miles.
+- Cada campo tiene un atributo `name`, que permitirá recibir su valor mediante `$_POST` en el siguiente archivo.
+- El formulario envía los datos a `actualizar.php`.
+
+### 31.3. Recibir y preparar los datos para actualizar
+
+En `actualizar.php`, recibimos los datos enviados mediante POST:
+
+```php
+$cod = trim($_POST["c_art"] ?? "");
+$sec = trim($_POST["seccion"] ?? "");
+$nom = trim($_POST["n_art"] ?? "");
+$pre = trim($_POST["precio"] ?? "");
+$fec = trim($_POST["fecha"] ?? "");
+$imp = trim($_POST["importado"] ?? "");
+$por = trim($_POST["p_orig"] ?? "");
+```
+
+Cada variable almacena el valor correspondiente a un campo del formulario.
+
+**Normalizar el precio**
+
+Como mostramos el precio utilizando un punto como separador de miles, debemos eliminar ese formato antes de enviarlo a MySQL.
+
+```php
+$pre = str_replace("$", "", $pre);
+$pre = str_replace(".", "", $pre);
+$pre = str_replace(",", ".", $pre);
+```
+
+Por ejemplo:
+
+- Precio recibido: `$25.000`
+- Precio normalizado: `25000`
+
+También validamos que el precio sea numérico:
+
+```php
+if (!is_numeric($pre)) {
+    throw new Exception("El precio ingresado no es válido");
+}
+```
+
+### 31.4. Ejecutar la consulta UPDATE
+
+La instrucción `UPDATE` permite modificar los valores de un registro existente.
+
+```php
+$consulta = "UPDATE ARTICULOS
+             SET NOMBREARTICULO = ?,
+                 SECCION = ?,
+                 IMPORTADO = ?,
+                 PRECIO = ?,
+                 FECHA = ?,
+                 PAISORIGEN = ?
+             WHERE CODIGOARTICULO = ?";
+```
+
+**Explicación:**
+
+- `UPDATE ARTICULOS`: indica la tabla que queremos modificar.
+- `SET`: establece los campos y sus nuevos valores.
+- `WHERE CODIGOARTICULO = ?`: identifica el registro que queremos actualizar.
+
+Preparamos la consulta:
+
+```php
+$stmt = mysqli_prepare($conexion, $consulta);
+```
+
+Asociamos los parámetros:
+
+```php
+mysqli_stmt_bind_param(
+    $stmt,
+    "sssdsss",
+    $nom,
+    $sec,
+    $imp,
+    $pre,
+    $fec,
+    $por,
+    $cod
+);
+```
+
+El segundo argumento indica el tipo de dato de cada parámetro:
+
+| Letra | Tipo de dato             |
+| ----- | ------------------------ |
+| `s`   | String (cadena de texto) |
+| `i`   | Integer (número entero)  |
+| `d`   | Double (número decimal)  |
+| `b`   | Blob (datos binarios)    |
+
+En este caso, utilizamos `"sssdsss"` porque el precio es numérico y los demás parámetros son cadenas de texto.
+
+Finalmente, ejecutamos la consulta:
+
+```php
+mysqli_stmt_execute($stmt);
+
+mysqli_stmt_close($stmt);
+```
+
+### 31.5. Recuperar los datos actualizados
+
+La instrucción `UPDATE` modifica los datos, pero no devuelve los registros como lo hace un `SELECT`.
+
+Por eso, realizamos una nueva consulta para recuperar el artículo con sus valores actualizados:
+
+```php
+$consulta = "SELECT * FROM ARTICULOS
+             WHERE CODIGOARTICULO = ?";
+
+$stmt = mysqli_prepare($conexion, $consulta);
+
+mysqli_stmt_bind_param($stmt, "s", $cod);
+
+mysqli_stmt_execute($stmt);
+
+$resultado = mysqli_stmt_get_result($stmt);
+
+$fila = mysqli_fetch_assoc($resultado);
+```
+
+Si encontramos el artículo, mostramos un mensaje de confirmación:
+
+```php
+if ($fila) {
+    $mensaje = "Artículo actualizado correctamente";
+    $tipo = "mensaje-exito";
+} else {
+    $mensaje = "No se encontró el artículo";
+    $tipo = "mensaje-error";
+}
+```
+
+### 31.6. Mostrar nuevamente los datos en el formulario
+
+Después de actualizar el registro, podemos mostrar sus datos nuevamente en un formulario para que el usuario pueda revisar o realizar nuevas modificaciones.
+
+Para ello, utilizamos los valores recuperados en `$fila`:
+
+```php
+<?php if ($fila) { ?>
+
+    <form class="formulario-articulo" action="" method="POST">
+
+        <label>Código del artículo</label>
+        <input type="text"
+               name="c_art"
+               value="<?php echo htmlspecialchars($fila['CODIGOARTICULO'], ENT_QUOTES, 'UTF-8'); ?>"
+               readonly>
+
+        <label>Nombre del artículo</label>
+        <input type="text"
+               name="n_art"
+               value="<?php echo htmlspecialchars($fila['NOMBREARTICULO'], ENT_QUOTES, 'UTF-8'); ?>">
+
+        <label>Sección</label>
+        <input type="text"
+               name="seccion"
+               value="<?php echo htmlspecialchars($fila['SECCION'], ENT_QUOTES, 'UTF-8'); ?>">
+
+        <label>Importado</label>
+        <input type="text"
+               name="importado"
+               value="<?php echo htmlspecialchars($fila['IMPORTADO'], ENT_QUOTES, 'UTF-8'); ?>">
+
+        <label>Precio</label>
+        <input type="text"
+               name="precio"
+               value="<?php echo '$' . number_format($fila['PRECIO'], 0, ',', '.'); ?>">
+
+        <label>Fecha</label>
+        <input type="text"
+               name="fecha"
+               value="<?php echo htmlspecialchars($fila['FECHA'], ENT_QUOTES, 'UTF-8'); ?>">
+
+        <label>País de origen</label>
+        <input type="text"
+               name="p_orig"
+               value="<?php echo htmlspecialchars($fila['PAISORIGEN'], ENT_QUOTES, 'UTF-8'); ?>">
+
+        <input type="submit" name="enviar" value="Guardar cambios">
+
+    </form>
+
+<?php } ?>
+```
+
+**Aspectos importantes:**
+
+- `readonly`: impide modificar el código del artículo, ya que lo utilizamos para identificar el registro.
+- Los demás campos quedan editables para permitir que el usuario realice cambios.
+- `action=""`: indica que el formulario enviará los datos al mismo archivo (`actualizar.php`).
+- El botón `Guardar cambios` vuelve a enviar los datos mediante POST para ejecutar nuevamente la actualización.
+
+### 31.7. Flujo general del proceso
+
+1. El usuario ingresa el código del artículo en `buscar.php`.
+2. `pagina_resultado.php` recibe el código y consulta la tabla `ARTICULOS`.
+3. Se muestran los datos del artículo en un formulario editable.
+4. El usuario modifica los campos que desea cambiar y presiona **Actualizar**.
+5. `actualizar.php` recibe los datos mediante POST.
+6. Se ejecuta la consulta `UPDATE` para modificar el registro.
+7. Se realiza una nueva consulta `SELECT` para recuperar los datos actualizados.
+8. Se muestra un mensaje de confirmación y nuevamente el formulario con los datos modificados.
+
+**En resumen:** para actualizar registros utilizamos `UPDATE`, `SET` y `WHERE`. La condición `WHERE` es fundamental porque permite identificar qué registro queremos modificar y evita actualizar accidentalmente todos los registros de la tabla.

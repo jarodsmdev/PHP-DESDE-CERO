@@ -1,0 +1,198 @@
+
+/* =====================================
+   CONFIGURACION GENERAL
+===================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef2f7;
+    color: #333;
+    min-height: 100vh;
+    padding: 40px 15px;
+}
+
+/* =====================================
+   CONTENEDOR PRINCIPAL
+===================================== */
+
+.contenedor {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+}
+
+/* =====================================
+   TITULOS
+===================================== */
+
+h1 {
+    color: #263b55;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e1e5eb;
+    margin-bottom: 25px;
+}
+
+/* =====================================
+   FORMULARIOS
+===================================== */
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 5px;
+    color: #444;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd3dd;
+    border-radius: 7px;
+    font-size: 15px;
+    background: #fff;
+    color: #333;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #2878d0;
+    box-shadow: 0 0 5px rgba(40, 120, 208, 0.25);
+}
+
+/* =====================================
+   BOTONES
+===================================== */
+
+input[type="submit"],
+button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 7px;
+    background: #2878d0;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background: #185da8;
+}
+
+/* BOTON VOLVER */
+
+.btn-volver {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    margin-top: 15px;
+    background-color: #64748b;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 7px;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-volver:hover {
+    background-color: #475569;
+}
+
+/* =====================================
+   AREA DE MENSAJES
+===================================== */
+
+.mensaje {
+    display: block;
+    width: 100%;
+    padding: 13px 15px;
+    margin: 20px 0;
+    border-radius: 7px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.mensaje-error {
+    background: #fde8e8;
+    color: #b42318;
+    border: 1px solid #f5b7b1;
+}
+
+.mensaje-exito {
+    background: #e5f7eb;
+    color: #18763b;
+    border: 1px solid #b7e4c7;
+}
+
+.mensaje-info {
+    background: #e8f1fd;
+    color: #185da8;
+    border: 1px solid #bdd5f5;
+}
+
+/* =====================================
+   RESULTADOS
+===================================== */
+
+.resultado {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8fafc;
+    border: 1px solid #e1e5eb;
+    border-radius: 8px;
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px 10px;
+    }
+
+    .contenedor {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 23px;
+    }
+
+}
